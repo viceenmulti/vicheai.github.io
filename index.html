@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asistente Minimalista</title>
+    <title>Asistente Minimalista con Cuentas</title>
     <style>
         * {
             box-sizing: border-box;
@@ -23,7 +23,7 @@
 
         .chat-container {
             width: 100%;
-            max-width: 650px;
+            max-width: 700px;
             height: 90vh;
             background-color: #1e1e1e;
             border-radius: 8px;
@@ -34,17 +34,12 @@
         }
 
         .header {
-            padding: 15px;
+            padding: 12px 15px;
             background-color: #252525;
             border-bottom: 1px solid #333;
             display: flex;
-            align-items: center;
             gap: 10px;
-        }
-
-        .header label {
-            font-size: 13px;
-            color: #aaa;
+            align-items: center;
         }
 
         .header input {
@@ -56,6 +51,20 @@
             border-radius: 4px;
             outline: none;
             font-size: 13px;
+        }
+
+        .header button {
+            padding: 6px 12px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .header button:hover {
+            background-color: #555;
         }
 
         .chat-box {
@@ -133,49 +142,98 @@
 
 <div class="chat-container">
     <div class="header">
-        <label for="passInput">Contraseña:</label>
-        <input type="password" id="passInput" placeholder="Ingresa la contraseña para chatear">
+        <input type="text" id="userInputName" placeholder="Tu Nombre de Usuario">
+        <input type="password" id="passInput" placeholder="Contraseña">
+        <button onclick="cargarHistorial()">Cargar Chats</button>
     </div>
 
     <div class="chat-box" id="chatBox">
-        <div class="message ia">¡Hola! Ingresa tu contraseña arriba y escribe tu consulta.</div>
+        <div class="message ia">¡Hola! Ingresa tu nombre y la contraseña arriba. Podes tocar "Cargar Chats" para ver tu historial.</div>
     </div>
 
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="Escribe tu consulta..." onkeypress="handleKeyPress(event)">
+        <input type="text" id="userInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
         <button onclick="enviarMensaje()">Enviar</button>
     </div>
 </div>
 
 <script>
-    // URL de tu Cloudflare Worker
     const WORKER_URL = "https://apikey.vgubertimartin.workers.dev/";
+    let historialLocal = [];
+
+    async function cargarHistorial() {
+        const usuario = document.getElementById('userInputName').value.trim();
+        const password = document.getElementById('passInput').value.trim();
+
+        if (!usuario || !password) {
+            alert("Por favor ingresa usuario y contraseña.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${WORKER_URL}obtener-chats`, {
+                headers: {
+                    'X-User-Name': usuario,
+                    'X-User-Pass': password
+                }
+            });
+
+            if (!response.ok) throw new Error("Acceso denegado.");
+
+            historialLocal = await response.json();
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML = ''; // Limpiar pantalla
+
+            if (historialLocal.length === 0) {
+                agregarMensaje("No tenes historial guardado aún.", 'ia');
+            } else {
+                historialLocal.forEach(msg => agregarMensaje(msg.texto, msg.tipo, false));
+            }
+        } catch (err) {
+            alert("Error al cargar historial: " + err.message);
+        }
+    }
+
+    async function guardarHistorial() {
+        const usuario = document.getElementById('userInputName').value.trim();
+        const password = document.getElementById('passInput').value.trim();
+
+        if (!usuario || !password) return;
+
+        await fetch(`${WORKER_URL}guardar-chat`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-User-Name': usuario,
+                'X-User-Pass': password
+            },
+            body: JSON.stringify({ chats: historialLocal })
+        });
+    }
 
     async function enviarMensaje() {
-        const passInput = document.getElementById('passInput');
+        const usuario = document.getElementById('userInputName').value.trim();
+        const password = document.getElementById('passInput').value.trim();
         const userInput = document.getElementById('userInput');
-
-        const password = passInput.value.trim();
         const pregunta = userInput.value.trim();
 
-        if (!password) {
-            alert("Por favor ingresa la contraseña primero.");
+        if (!usuario || !password) {
+            alert("Por favor ingresa usuario y contraseña.");
             return;
         }
 
         if (!pregunta) return;
 
-        // Mostrar mensaje del usuario
         agregarMensaje(pregunta, 'user');
         userInput.value = '';
 
         try {
             const response = await fetch(WORKER_URL, {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
-                    'X-User-Pass': password, // Se envía la contraseña al Worker
-                    'X-Admin-Token': password // Si pones tu token admin, el Worker lo reconoce automáticamente
+                    'X-User-Name': usuario,
+                    'X-User-Pass': password
                 },
                 body: JSON.stringify({ pregunta: pregunta })
             });
@@ -185,23 +243,26 @@
             if (response.ok && data.candidates && data.candidates[0].content.parts[0].text) {
                 const respuestaIA = data.candidates[0].content.parts[0].text;
                 agregarMensaje(respuestaIA, 'ia');
-            } else if (data.error) {
-                agregarMensaje("Error: " + data.error, 'error');
+                await guardarHistorial(); // Guarda en Cloudflare KV automáticamente
             } else {
-                agregarMensaje("Error en la respuesta del servidor.", 'error');
+                agregarMensaje("Error en la respuesta: " + (data.error || "Error desconocido"), 'error');
             }
         } catch (error) {
-            agregarMensaje("Error al conectar con el servidor intermediario: " + error.message, 'error');
+            agregarMensaje("Error de conexión: " + error.message, 'error');
         }
     }
 
-    function agregarMensaje(texto, tipo) {
+    function agregarMensaje(texto, tipo, guardarEnMemoria = true) {
         const chatBox = document.getElementById('chatBox');
         const msgDiv = document.createElement('div');
         msgDiv.classList.add('message', tipo);
         msgDiv.textContent = texto;
         chatBox.appendChild(msgDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
+
+        if (guardarEnMemoria) {
+            historialLocal.push({ texto, tipo });
+        }
     }
 
     function handleKeyPress(e) {
