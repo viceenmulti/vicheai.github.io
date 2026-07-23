@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -142,13 +142,13 @@
 
 <div class="chat-container">
     <div class="header">
-        <input type="text" id="userInputName" placeholder="Tu Nombre de Usuario">
-        <input type="password" id="passInput" placeholder="Contraseña">
+        <input type="text" id="userInputName" placeholder="Tu Nombre (ej: admin)">
+        <input type="password" id="passInput" placeholder="Contraseña (betavicheai)">
         <button onclick="cargarHistorial()">Cargar Chats</button>
     </div>
 
     <div class="chat-box" id="chatBox">
-        <div class="message ia">¡Hola! Ingresa tu nombre y la contraseña arriba. Podes tocar "Cargar Chats" para ver tu historial.</div>
+        <div class="message ia">¡Hola! Ingresa tu usuario y contraseña arriba y toca "Cargar Chats" para ver tu historial guardado.</div>
     </div>
 
     <div class="input-area">
@@ -158,34 +158,41 @@
 </div>
 
 <script>
-    const WORKER_URL = "https://apikey.vgubertimartin.workers.dev/";
+    // Aseguramos que la URL base termina sin barra extra para armarla limpiamente
+    const WORKER_BASE = "https://apikey.vgubertimartin.workers.dev";
     let historialLocal = [];
 
     async function cargarHistorial() {
         const usuario = document.getElementById('userInputName').value.trim();
-        const password = document.getElementById('passInput').value.trim();
+        const password = document.getElementById('passInput').value.trim() || "betavicheai";
 
-        if (!usuario || !password) {
-            alert("Por favor ingresa usuario y contraseña.");
+        if (!usuario) {
+            alert("Por favor ingresa un nombre de usuario.");
             return;
         }
 
         try {
-            const response = await fetch(`${WORKER_URL}obtener-chats`, {
+            const url = `${WORKER_BASE}/obtener-chats`;
+            const response = await fetch(url, {
+                method: 'GET',
                 headers: {
                     'X-User-Name': usuario,
                     'X-User-Pass': password
                 }
             });
 
-            if (!response.ok) throw new Error("Acceso denegado.");
+            if (!response.ok) {
+                const errorJson = await response.json().catch(() => ({}));
+                throw new Error(errorJson.error || `Error servidor (${response.status})`);
+            }
 
             historialLocal = await response.json();
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = ''; // Limpiar pantalla
 
-            if (historialLocal.length === 0) {
-                agregarMensaje("No tenes historial guardado aún.", 'ia');
+            if (!Array.isArray(historialLocal) || historialLocal.length === 0) {
+                agregarMensaje("No tenés chats guardados aún para este usuario.", 'ia', false);
+                historialLocal = [];
             } else {
                 historialLocal.forEach(msg => agregarMensaje(msg.texto, msg.tipo, false));
             }
@@ -196,39 +203,44 @@
 
     async function guardarHistorial() {
         const usuario = document.getElementById('userInputName').value.trim();
-        const password = document.getElementById('passInput').value.trim();
+        const password = document.getElementById('passInput').value.trim() || "betavicheai";
 
-        if (!usuario || !password) return;
+        if (!usuario) return;
 
-        await fetch(`${WORKER_URL}guardar-chat`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-User-Name': usuario,
-                'X-User-Pass': password
-            },
-            body: JSON.stringify({ chats: historialLocal })
-        });
+        try {
+            const url = `${WORKER_BASE}/guardar-chat`;
+            await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-User-Name': usuario,
+                    'X-User-Pass': password
+                },
+                body: JSON.stringify({ chats: historialLocal })
+            });
+        } catch (e) {
+            console.error("Error guardando en KV:", e);
+        }
     }
 
     async function enviarMensaje() {
         const usuario = document.getElementById('userInputName').value.trim();
-        const password = document.getElementById('passInput').value.trim();
+        const password = document.getElementById('passInput').value.trim() || "betavicheai";
         const userInput = document.getElementById('userInput');
         const pregunta = userInput.value.trim();
 
-        if (!usuario || !password) {
-            alert("Por favor ingresa usuario y contraseña.");
+        if (!usuario) {
+            alert("Por favor ingresa tu nombre de usuario arriba.");
             return;
         }
 
         if (!pregunta) return;
 
-        agregarMensaje(pregunta, 'user');
+        agregarMensaje(pregunta, 'user', true);
         userInput.value = '';
 
         try {
-            const response = await fetch(WORKER_URL, {
+            const response = await fetch(WORKER_BASE, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -242,13 +254,14 @@
 
             if (response.ok && data.candidates && data.candidates[0].content.parts[0].text) {
                 const respuestaIA = data.candidates[0].content.parts[0].text;
-                agregarMensaje(respuestaIA, 'ia');
-                await guardarHistorial(); // Guarda en Cloudflare KV automáticamente
+                agregarMensaje(respuestaIA, 'ia', true);
+                await guardarHistorial(); // Guarda automáticamente en Cloudflare KV
             } else {
-                agregarMensaje("Error en la respuesta: " + (data.error || "Error desconocido"), 'error');
+                const errMsj = data.error || "Error en la respuesta del servidor.";
+                agregarMensaje("Error: " + errMsj, 'error', false);
             }
         } catch (error) {
-            agregarMensaje("Error de conexión: " + error.message, 'error');
+            agregarMensaje("Error de conexión: " + error.message, 'error', false);
         }
     }
 
