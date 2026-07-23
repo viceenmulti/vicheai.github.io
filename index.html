@@ -133,12 +133,12 @@
 
 <div class="chat-container">
     <div class="header">
-        <label for="apiKey">API Key:</label>
-        <input type="password" id="apiKey" placeholder="Pega tu API Key de Gemini aquí">
+        <label for="passInput">Contraseña:</label>
+        <input type="password" id="passInput" placeholder="Ingresa la contraseña para chatear">
     </div>
 
     <div class="chat-box" id="chatBox">
-        <div class="message ia">¡Hola! Pega tu API Key arriba para empezar a consultar.</div>
+        <div class="message ia">¡Hola! Ingresa tu contraseña arriba y escribe tu consulta.</div>
     </div>
 
     <div class="input-area">
@@ -148,16 +148,18 @@
 </div>
 
 <script>
-    async function enviarMensaje() {
-        const apiKeyInput = document.getElementById('apiKey');
-        const userInput = document.getElementById('userInput');
-        const chatBox = document.getElementById('chatBox');
+    // URL de tu Cloudflare Worker
+    const WORKER_URL = "https://apikey.vgubertimartin.workers.dev/";
 
-        const apiKey = apiKeyInput.value.trim();
+    async function enviarMensaje() {
+        const passInput = document.getElementById('passInput');
+        const userInput = document.getElementById('userInput');
+
+        const password = passInput.value.trim();
         const pregunta = userInput.value.trim();
 
-        if (!apiKey) {
-            alert("Por favor ingresa tu API Key primero.");
+        if (!password) {
+            alert("Por favor ingresa la contraseña primero.");
             return;
         }
 
@@ -167,33 +169,29 @@
         agregarMensaje(pregunta, 'user');
         userInput.value = '';
 
-        // Petición a Gemini
-        const modelo = "gemini-3.1-flash-lite";
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent?key=${apiKey}`;
-
         try {
-            const response = await fetch(url, {
+            const response = await fetch(WORKER_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    // Instrucción obligatoria del sistema para fijar el idioma
-                    system_instruction: {
-                        parts: [{ text: "Responde ÚNICAMENTE en español. Bajo ninguna circunstancia respondas en otro idioma." }]
-                    },
-                    contents: [{ parts: [{ text: pregunta }] }]
-                })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-User-Pass': password, // Se envía la contraseña al Worker
+                    'X-Admin-Token': password // Si pones tu token admin, el Worker lo reconoce automáticamente
+                },
+                body: JSON.stringify({ pregunta: pregunta })
             });
 
             const data = await response.json();
 
-            if (data.candidates && data.candidates[0].content.parts[0].text) {
+            if (response.ok && data.candidates && data.candidates[0].content.parts[0].text) {
                 const respuestaIA = data.candidates[0].content.parts[0].text;
                 agregarMensaje(respuestaIA, 'ia');
+            } else if (data.error) {
+                agregarMensaje("Error: " + data.error, 'error');
             } else {
-                agregarMensaje("Error en la respuesta de la API.", 'error');
+                agregarMensaje("Error en la respuesta del servidor.", 'error');
             }
         } catch (error) {
-            agregarMensaje("Error al conectar con la API: " + error.message, 'error');
+            agregarMensaje("Error al conectar con el servidor intermediario: " + error.message, 'error');
         }
     }
 
