@@ -46,9 +46,9 @@
             flex-wrap: wrap;
         }
 
-        /* BOTÓN PREMIUM ARRIBA A LA IZQUIERDA */
+        /* BOTÓN PREMIUM ARRIBA A LA IZQUIERDA (AMARILLO) */
         .btn-premium {
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            background-color: #ffcc00;
             color: #000;
             border: none;
             padding: 8px 14px;
@@ -56,14 +56,15 @@
             font-weight: bold;
             font-size: 12px;
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
             transition: transform 0.2s, box-shadow 0.2s;
             white-space: nowrap;
         }
 
         .btn-premium:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+            background-color: #e6b800;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
         }
 
         .header input {
@@ -217,9 +218,10 @@
             text-align: center;
         }
 
+        /* BOTÓN COPIAR ALIAS (CIAN) */
         .btn-copy {
-            background-color: #ffd700;
-            color: #000;
+            background-color: #00aeef;
+            color: #fff;
             border: none;
             padding: 10px;
             border-radius: 6px;
@@ -232,9 +234,10 @@
         }
 
         .btn-copy:active {
-            background-color: #e6c200;
+            background-color: #008cc4;
         }
 
+        /* BOTÓN WHATSAPP (VERDE) */
         .btn-wsp {
             display: block;
             width: 100%;
@@ -246,6 +249,11 @@
             font-weight: bold;
             font-size: 13px;
             margin-top: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-wsp:active {
+            background-color: #1ebd56;
         }
 
         .btn-close-modal {
@@ -309,7 +317,7 @@
                 <button class="btn-copy" onclick="copiarAlias()">📋 Copiar Alias al portapapeles</button>
             </div>
 
-            <!-- REEMPLAZÁ EL NÚMERO '5491112345678' POR TU NÚMERO DE TELÉFONO REAL -->
+            <!-- REEMPLAZÁ EL NÚMERO POR TU NÚMERO DE TELÉFONO REAL -->
             <a href="https://wa.me/5493415932150?text=Hola!%20Te%20envio%20el%20comprobante%20de%201500%20pesos%20para%20activar%20mi%20cuenta%20Premium." target="_blank" class="btn-wsp">
                 📱 Enviar Comprobante por WhatsApp
             </a>
