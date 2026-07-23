@@ -22,6 +22,7 @@
             height: 100dvh; 
             width: 100vw;
             overflow: hidden;
+            transition: background-color 0.3s;
         }
 
         .chat-container {
@@ -33,6 +34,7 @@
             flex-direction: column;
             overflow: hidden;
             position: relative;
+            transition: background-color 0.3s;
         }
 
         /* HEADER / BARRA SUPERIOR */
@@ -65,6 +67,26 @@
             transform: scale(1.05);
             background-color: #e6b800;
             box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
+        }
+
+        /* BOTÓN DE FONDOS (SOLO VISIBLE SI ES PREMIUM) */
+        .btn-fondos {
+            display: none; /* Se activa por JS si es Premium */
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+            transition: transform 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-fondos:hover {
+            transform: scale(1.05);
         }
 
         .header input {
@@ -169,7 +191,7 @@
             font-size: 14px;
         }
 
-        /* MODAL DE PREMIUM / VENTANA FLOTANTE */
+        /* MODALES Y VENTANAS FLOTANTES */
         .modal-overlay {
             position: absolute;
             top: 0; left: 0;
@@ -218,7 +240,6 @@
             text-align: center;
         }
 
-        /* BOTÓN COPIAR ALIAS (CIAN) */
         .btn-copy {
             background-color: #00aeef;
             color: #fff;
@@ -233,11 +254,8 @@
             transition: background 0.2s;
         }
 
-        .btn-copy:active {
-            background-color: #008cc4;
-        }
+        .btn-copy:active { background-color: #008cc4; }
 
-        /* BOTÓN WHATSAPP (VERDE) */
         .btn-wsp {
             display: block;
             width: 100%;
@@ -252,9 +270,7 @@
             transition: background 0.2s;
         }
 
-        .btn-wsp:active {
-            background-color: #1ebd56;
-        }
+        .btn-wsp:active { background-color: #1ebd56; }
 
         .btn-close-modal {
             position: absolute;
@@ -266,11 +282,38 @@
             cursor: pointer;
         }
 
+        /* OPCIONES DE FONDOS */
+        .fondos-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-opcion-fondo {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .btn-opcion-fondo:hover {
+            transform: translateX(4px);
+            border-color: #ffd700;
+        }
+
         /* CELULARES */
         @media (max-width: 600px) {
             .chat-container { border-radius: 0; }
             .header { padding: 8px; gap: 6px; }
-            .btn-premium { width: 100%; text-align: center; order: -1; }
+            .btn-premium, .btn-fondos { width: 100%; text-align: center; order: -1; }
             .header button.btn-cargar { flex: 1; }
             .message { max-width: 90%; font-size: 14px; }
         }
@@ -278,9 +321,13 @@
 </head>
 <body>
 
-<div class="chat-container">
+<div class="chat-container" id="mainContainer">
     <div class="header">
-        <button class="btn-premium" onclick="abrirModalPremium()">🌟 Volverse Premium ($1500)</button>
+        <!-- BOTÓN DE COMPRA (SE OCULTA SI ES PREMIUM) -->
+        <button class="btn-premium" id="btnPremium" onclick="abrirModalPremium()">🌟 Volverse Premium ($1500)</button>
+        
+        <!-- BOTÓN DE FONDOS (SE DESBLOQUEA SI ES PREMIUM) -->
+        <button class="btn-fondos" id="btnFondos" onclick="abrirModalFondos()">🎨 Elegir Fondo</button>
         
         <input type="text" id="userInputName" placeholder="Usuario">
         <input type="password" id="passInput" placeholder="Tu Contraseña">
@@ -296,7 +343,7 @@
         <button onclick="enviarMensaje()">Enviar</button>
     </div>
 
-    <!-- MODAL PARA PAGO -->
+    <!-- MODAL PARA PAGO PREMIUM -->
     <div class="modal-overlay" id="modalPremium">
         <div class="modal-card">
             <button class="btn-close-modal" onclick="cerrarModalPremium()">✕</button>
@@ -304,9 +351,9 @@
             <p style="font-size: 13px; color: #aaa;">Desbloqueá todas las funciones por solo <b>$1500 ARS</b></p>
             
             <ul>
-                <li>🎨 <b>Temas Visuales:</b> Cambiá colores y fondos.</li>
-                <li>🧠 <b>Modos de IA:</b> Resúmenes, Programación y más.</li>
-                <li>⚡ <b>Uso Ilimitado:</b> Sin restricciones de mensajes.</li>
+                <li>🎨 <b>Temas Visuales:</b> Cambiá colores y fondos personalizados.</li>
+                <li>🧠 <b>Respuestas Máximas:</b> Acceso a Gemini 3.1 Flash Lite.</li>
+                <li>⚡ <b>Uso Ilimitado:</b> Sin restricciones de mensajes diarios.</li>
             </ul>
 
             <div class="alias-box">
@@ -320,19 +367,41 @@
             </a>
         </div>
     </div>
+
+    <!-- MODAL DE SELECCIÓN DE FONDOS (EXCLUSIVO PREMIUM) -->
+    <div class="modal-overlay" id="modalFondos">
+        <div class="modal-card">
+            <button class="btn-close-modal" onclick="cerrarModalFondos()">✕</button>
+            <h2>Personalizar Fondo 🎨</h2>
+            <p style="font-size: 13px; color: #aaa;">Elegí el estilo visual de tu chat:</p>
+            
+            <div class="fondos-grid">
+                <button class="btn-opcion-fondo" style="background-color: #1e1e1e;" onclick="aplicarFondo('gris')">
+                    <span>🌑 Gris Minimalista</span>
+                    <span style="font-size: 11px; color: #888;">Predeterminado</span>
+                </button>
+                <button class="btn-opcion-fondo" style="background-color: #0b1326;" onclick="aplicarFondo('cyber')">
+                    <span>⚡ Cyberpunk Neón</span>
+                    <span style="font-size: 11px; color: #00e5ff;">Azul Profundo</span>
+                </button>
+                <button class="btn-opcion-fondo" style="background-color: #241d0c;" onclick="aplicarFondo('gold')">
+                    <span>🏆 Dorado VIP</span>
+                    <span style="font-size: 11px; color: #ffd700;">Edición Premium</span>
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     const WORKER_BASE = "https://apikey.vgubertimartin.workers.dev";
     let historialLocal = [];
 
-    function abrirModalPremium() {
-        document.getElementById('modalPremium').style.display = 'flex';
-    }
-
-    function cerrarModalPremium() {
-        document.getElementById('modalPremium').style.display = 'none';
-    }
+    // Modales
+    function abrirModalPremium() { document.getElementById('modalPremium').style.display = 'flex'; }
+    function cerrarModalPremium() { document.getElementById('modalPremium').style.display = 'none'; }
+    function abrirModalFondos() { document.getElementById('modalFondos').style.display = 'flex'; }
+    function cerrarModalFondos() { document.getElementById('modalFondos').style.display = 'none'; }
 
     function copiarAlias() {
         const alias = document.getElementById('aliasTexto').innerText;
@@ -341,6 +410,36 @@
         }).catch(() => {
             alert("No se pudo copiar automáticamente, seleccionalo manualmente.");
         });
+    }
+
+    // Lógica para cambiar estado si es Premium
+    function actualizarModoPremium(esPremium) {
+        const btnPremium = document.getElementById('btnPremium');
+        const btnFondos = document.getElementById('btnFondos');
+
+        if (esPremium) {
+            btnPremium.style.display = 'none';
+            btnFondos.style.display = 'inline-block';
+        } else {
+            btnPremium.style.display = 'inline-block';
+            btnFondos.style.display = 'none';
+        }
+    }
+
+    // Lógica para cambiar fondos de pantalla
+    function aplicarFondo(estilo) {
+        const container = document.getElementById('mainContainer');
+        if (estilo === 'cyber') {
+            container.style.backgroundColor = '#0b1326';
+            document.body.style.backgroundColor = '#040814';
+        } else if (estilo === 'gold') {
+            container.style.backgroundColor = '#241d0c';
+            document.body.style.backgroundColor = '#120e05';
+        } else {
+            container.style.backgroundColor = '#1e1e1e';
+            document.body.style.backgroundColor = '#121212';
+        }
+        cerrarModalFondos();
     }
 
     async function cargarHistorial() {
@@ -377,6 +476,7 @@
             } else {
                 historialLocal.forEach(msg => agregarMensaje(msg.texto, msg.tipo, false));
             }
+
         } catch (err) {
             alert("Error al cargar historial: " + err.message);
         }
@@ -432,6 +532,11 @@
             });
 
             const data = await response.json();
+
+            // Si el Worker envía si es Premium, actualizamos los botones
+            if (data.isPremium !== undefined) {
+                actualizarModoPremium(data.isPremium);
+            }
 
             if (response.ok && data.candidates && data.candidates[0].content.parts[0].text) {
                 const respuestaIA = data.candidates[0].content.parts[0].text;
