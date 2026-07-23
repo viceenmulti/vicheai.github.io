@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
-    <title>Asistente Minimalista con Cuentas</title>
+    <title>Asistente Minimalista con Cuentas Personalizadas</title>
     <style>
         * {
             box-sizing: border-box;
@@ -282,13 +282,13 @@
     <div class="header">
         <button class="btn-premium" onclick="abrirModalPremium()">🌟 Volverse Premium ($1500)</button>
         
-        <input type="text" id="userInputName" placeholder="Usuario (ej: admin)">
-        <input type="password" id="passInput" placeholder="Contraseña">
+        <input type="text" id="userInputName" placeholder="Usuario">
+        <input type="password" id="passInput" placeholder="Tu Contraseña">
         <button class="btn-cargar" onclick="cargarHistorial()">Cargar Chats</button>
     </div>
 
     <div class="chat-box" id="chatBox">
-        <div class="message ia">¡Hola! Ingresá tu usuario y contraseña arriba y tocá "Cargar Chats" para ver tu historial.</div>
+        <div class="message ia">¡Hola! Ingresá tu usuario y contraseña personal arriba para comenzar.</div>
     </div>
 
     <div class="input-area">
@@ -296,7 +296,7 @@
         <button onclick="enviarMensaje()">Enviar</button>
     </div>
 
-    <!-- MODAL / VENTANA FLOTANTE PARA PAGO POR ALIAS -->
+    <!-- MODAL PARA PAGO -->
     <div class="modal-overlay" id="modalPremium">
         <div class="modal-card">
             <button class="btn-close-modal" onclick="cerrarModalPremium()">✕</button>
@@ -309,15 +309,12 @@
                 <li>⚡ <b>Uso Ilimitado:</b> Sin restricciones de mensajes.</li>
             </ul>
 
-            <!-- CUADRO CON DATOS DE PAGO -->
             <div class="alias-box">
                 <p style="font-size: 12px; color: #aaa;">Copiá el Alias para transferir:</p>
-                <!-- REEMPLAZÁ 'TU.ALIAS.AQUI' POR TU ALIAS REAL -->
                 <p style="font-size: 16px; font-weight: bold; color: #ffd700; margin: 4px 0;" id="aliasTexto">vicen12</p>
                 <button class="btn-copy" onclick="copiarAlias()">📋 Copiar Alias al portapapeles</button>
             </div>
 
-            <!-- REEMPLAZÁ EL NÚMERO POR TU NÚMERO DE TELÉFONO REAL -->
             <a href="https://wa.me/5493415932150?text=Hola!%20Te%20envio%20el%20comprobante%20de%201500%20pesos%20para%20activar%20mi%20cuenta%20Premium." target="_blank" class="btn-wsp">
                 📱 Enviar Comprobante por WhatsApp
             </a>
@@ -348,10 +345,10 @@
 
     async function cargarHistorial() {
         const usuario = document.getElementById('userInputName').value.trim();
-        const password = document.getElementById('passInput').value.trim() || "betavicheai";
+        const password = document.getElementById('passInput').value.trim();
 
-        if (!usuario) {
-            alert("Por favor ingresa un nombre de usuario.");
+        if (!usuario || !password) {
+            alert("Por favor ingresa tu usuario y contraseña.");
             return;
         }
 
@@ -387,9 +384,9 @@
 
     async function guardarHistorial() {
         const usuario = document.getElementById('userInputName').value.trim();
-        const password = document.getElementById('passInput').value.trim() || "betavicheai";
+        const password = document.getElementById('passInput').value.trim();
 
-        if (!usuario) return;
+        if (!usuario || !password) return;
 
         try {
             const url = `${WORKER_BASE}/guardar-chat`;
@@ -409,12 +406,12 @@
 
     async function enviarMensaje() {
         const usuario = document.getElementById('userInputName').value.trim();
-        const password = document.getElementById('passInput').value.trim() || "betavicheai";
+        const password = document.getElementById('passInput').value.trim();
         const userInput = document.getElementById('userInput');
         const pregunta = userInput.value.trim();
 
-        if (!usuario) {
-            alert("Por favor ingresa tu nombre de usuario arriba.");
+        if (!usuario || !password) {
+            alert("Por favor ingresa tu usuario y contraseña arriba.");
             return;
         }
 
