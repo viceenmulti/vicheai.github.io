@@ -176,6 +176,10 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    // Instrucción obligatoria del sistema para fijar el idioma
+                    system_instruction: {
+                        parts: [{ text: "Responde ÚNICAMENTE en español. Bajo ninguna circunstancia respondas en otro idioma." }]
+                    },
                     contents: [{ parts: [{ text: pregunta }] }]
                 })
             });
