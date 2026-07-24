@@ -22,7 +22,7 @@
             height: 100dvh; 
             width: 100vw;
             overflow: hidden;
-            transition: background-color 0.3s;
+            transition: background 0.3s;
         }
 
         .chat-container {
@@ -34,21 +34,23 @@
             flex-direction: column;
             overflow: hidden;
             position: relative;
-            transition: background-color 0.3s;
+            transition: background 0.3s;
         }
 
         /* HEADER / BARRA SUPERIOR */
         .header {
             padding: 12px;
-            background-color: #252525;
-            border-bottom: 1px solid #333;
+            background-color: rgba(37, 37, 37, 0.85);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             gap: 8px;
             align-items: center;
             flex-wrap: wrap;
+            z-index: 10;
         }
 
-        /* BOTÓN PREMIUM ARRIBA A LA IZQUIERDA (AMARILLO) */
+        /* BOTÓN PREMIUM ARRIBA A LA IZQUIERDA */
         .btn-premium {
             background-color: #ffcc00;
             color: #000;
@@ -69,9 +71,9 @@
             box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
         }
 
-        /* BOTÓN DE FONDOS (SOLO VISIBLE SI ES PREMIUM) */
+        /* BOTÓN DE FONDOS */
         .btn-fondos {
-            display: none; /* Se activa por JS si es Premium */
+            display: none;
             background: linear-gradient(135deg, #ffd700, #ff8c00);
             color: #000;
             border: none;
@@ -93,8 +95,8 @@
             flex: 1 1 110px;
             min-width: 0;
             padding: 8px 10px;
-            background-color: #333;
-            border: 1px solid #444;
+            background-color: rgba(51, 51, 51, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: #fff;
             border-radius: 6px;
             outline: none;
@@ -103,7 +105,7 @@
 
         .header button.btn-cargar {
             padding: 8px 12px;
-            background-color: #3a3a3a;
+            background-color: rgba(58, 58, 58, 0.9);
             color: #fff;
             border: none;
             border-radius: 6px;
@@ -128,6 +130,7 @@
             -webkit-overflow-scrolling: touch; 
         }
 
+        /* MENSAJES SEMI-TRANSPARENTES CON EFECTO GLASSMORPHISM */
         .message {
             max-width: 85%;
             padding: 12px 16px;
@@ -136,44 +139,51 @@
             font-size: 15px;
             word-break: break-word;
             white-space: pre-wrap;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         }
 
         .message.user {
             align-self: flex-end;
-            background-color: #2b3a4a;
+            background-color: rgba(30, 60, 95, 0.75);
             color: #ffffff;
+            border: 1px solid rgba(100, 150, 220, 0.3);
             border-bottom-right-radius: 2px;
         }
 
         .message.ia {
             align-self: flex-start;
-            background-color: #2a2a2a;
-            color: #e0e0e0;
-            border: 1px solid #383838;
+            background-color: rgba(25, 25, 25, 0.75);
+            color: #f0f0f0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-bottom-left-radius: 2px;
         }
 
         .message.error {
             align-self: center;
-            background-color: #4a1515;
+            background-color: rgba(74, 21, 21, 0.85);
             color: #ff9999;
             font-size: 13px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
         }
 
         /* ÁREA DE INGRESO DE TEXTO */
         .input-area {
             padding: 12px;
-            background-color: #252525;
+            background-color: rgba(37, 37, 37, 0.85);
+            backdrop-filter: blur(8px);
             display: flex;
             gap: 8px;
-            border-top: 1px solid #333;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
         }
 
         .input-area input {
             flex: 1;
             padding: 12px;
-            background-color: #1e1e1e;
-            border: 1px solid #3a3a3a;
+            background-color: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: #fff;
             border-radius: 6px;
             outline: none;
@@ -191,12 +201,13 @@
             font-size: 14px;
         }
 
-        /* MODALES Y VENTANAS FLOTANTES */
+        /* MODALES */
         .modal-overlay {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
             display: none;
             justify-content: center;
             align-items: center;
@@ -323,10 +334,7 @@
 
 <div class="chat-container" id="mainContainer">
     <div class="header">
-        <!-- BOTÓN DE COMPRA (SE OCULTA SI ES PREMIUM) -->
         <button class="btn-premium" id="btnPremium" onclick="abrirModalPremium()">🌟 Volverse Premium ($1500)</button>
-        
-        <!-- BOTÓN DE FONDOS (SE DESBLOQUEA SI ES PREMIUM) -->
         <button class="btn-fondos" id="btnFondos" onclick="abrirModalFondos()">🎨 Elegir Fondo</button>
         
         <input type="text" id="userInputName" placeholder="Usuario">
@@ -343,7 +351,7 @@
         <button onclick="enviarMensaje()">Enviar</button>
     </div>
 
-    <!-- MODAL PARA PAGO PREMIUM -->
+    <!-- MODAL PAGO -->
     <div class="modal-overlay" id="modalPremium">
         <div class="modal-card">
             <button class="btn-close-modal" onclick="cerrarModalPremium()">✕</button>
@@ -368,7 +376,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE SELECCIÓN DE FONDOS (EXCLUSIVO PREMIUM) -->
+    <!-- MODAL FONDOS -->
     <div class="modal-overlay" id="modalFondos">
         <div class="modal-card">
             <button class="btn-close-modal" onclick="cerrarModalFondos()">✕</button>
@@ -380,13 +388,17 @@
                     <span>🌑 Gris Minimalista</span>
                     <span style="font-size: 11px; color: #888;">Predeterminado</span>
                 </button>
-                <button class="btn-opcion-fondo" style="background-color: #0b1326;" onclick="aplicarFondo('cyber')">
-                    <span>⚡ Cyberpunk Neón</span>
-                    <span style="font-size: 11px; color: #00e5ff;">Azul Profundo</span>
+                <button class="btn-opcion-fondo" style="background-color: #fcf8f2; color: #333;" onclick="aplicarFondo('flores')">
+                    <span>🌸 Jardin Floral</span>
+                    <span style="font-size: 11px; color: #b85b82;">Flores.webp</span>
                 </button>
-                <button class="btn-opcion-fondo" style="background-color: #241d0c;" onclick="aplicarFondo('gold')">
+                <button class="btn-opcion-fondo" style="background-color: #080f1e;" onclick="aplicarFondo('estrellas')">
+                    <span>🌌 Noche Estrellada</span>
+                    <span style="font-size: 11px; color: #00e5ff;">Estrellas.webp</span>
+                </button>
+                <button class="btn-opcion-fondo" style="background-color: #1a1402;" onclick="aplicarFondo('oro')">
                     <span>🏆 Dorado VIP</span>
-                    <span style="font-size: 11px; color: #ffd700;">Edición Premium</span>
+                    <span style="font-size: 11px; color: #ffd700;">Oro.webp</span>
                 </button>
             </div>
         </div>
@@ -412,7 +424,6 @@
         });
     }
 
-    // Lógica para cambiar estado si es Premium
     function actualizarModoPremium(esPremium) {
         const btnPremium = document.getElementById('btnPremium');
         const btnFondos = document.getElementById('btnFondos');
@@ -426,16 +437,34 @@
         }
     }
 
-    // Lógica para cambiar fondos de pantalla
+    // Lógica para aplicar los fondos .webp descentrados
     function aplicarFondo(estilo) {
         const container = document.getElementById('mainContainer');
-        if (estilo === 'cyber') {
-            container.style.backgroundColor = '#0b1326';
+        
+        // Limpiamos estilos previos
+        container.style.backgroundColor = '';
+        container.style.backgroundImage = '';
+        container.style.backgroundRepeat = 'no-repeat';
+
+        if (estilo === 'flores') {
+            container.style.backgroundImage = "url('flores.webp')";
+            container.style.backgroundSize = 'cover';
+            container.style.backgroundPosition = '25% 20%'; // Descentrado suave
+            document.body.style.backgroundColor = '#fdfbf7';
+        } 
+        else if (estilo === 'estrellas') {
+            container.style.backgroundImage = "url('estrellas.webp')";
+            container.style.backgroundSize = 'cover';
+            container.style.backgroundPosition = '70% 30%'; // Descentrado hacia la derecha
             document.body.style.backgroundColor = '#040814';
-        } else if (estilo === 'gold') {
-            container.style.backgroundColor = '#241d0c';
-            document.body.style.backgroundColor = '#120e05';
-        } else {
+        } 
+        else if (estilo === 'oro') {
+            container.style.backgroundImage = "url('oro.webp')";
+            container.style.backgroundSize = 'cover';
+            container.style.backgroundPosition = '15% 40%'; // Descentrado hacia la izquierda
+            document.body.style.backgroundColor = '#0d0b04';
+        } 
+        else {
             container.style.backgroundColor = '#1e1e1e';
             document.body.style.backgroundColor = '#121212';
         }
@@ -466,7 +495,13 @@
                 throw new Error(errorJson.error || `Error servidor (${response.status})`);
             }
 
-            historialLocal = await response.json();
+            const data = await response.json();
+            historialLocal = data.chats || [];
+            
+            if (data.isPremium !== undefined) {
+                actualizarModoPremium(data.isPremium);
+            }
+
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = '';
 
@@ -533,7 +568,6 @@
 
             const data = await response.json();
 
-            // Si el Worker envía si es Premium, actualizamos los botones
             if (data.isPremium !== undefined) {
                 actualizarModoPremium(data.isPremium);
             }
