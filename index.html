@@ -437,7 +437,7 @@
         }
     }
 
-    // Lógica para aplicar los fondos .webp descentrados
+    // Lógica para aplicar los fondos con las imágenes corregidas
     function aplicarFondo(estilo) {
         const container = document.getElementById('mainContainer');
         
@@ -447,21 +447,21 @@
         container.style.backgroundRepeat = 'no-repeat';
 
         if (estilo === 'flores') {
-            container.style.backgroundImage = "url('flores.webp')";
+            container.style.backgroundImage = "url('estrellas.webp')"; // Intercambiado para arreglar el orden
             container.style.backgroundSize = 'cover';
-            container.style.backgroundPosition = '25% 20%'; // Descentrado suave
+            container.style.backgroundPosition = '25% 20%';
             document.body.style.backgroundColor = '#fdfbf7';
         } 
         else if (estilo === 'estrellas') {
-            container.style.backgroundImage = "url('estrellas.webp')";
+            container.style.backgroundImage = "url('flores.webp')"; // Intercambiado para arreglar el orden
             container.style.backgroundSize = 'cover';
-            container.style.backgroundPosition = '70% 30%'; // Descentrado hacia la derecha
+            container.style.backgroundPosition = '70% 30%';
             document.body.style.backgroundColor = '#040814';
         } 
         else if (estilo === 'oro') {
             container.style.backgroundImage = "url('oro.webp')";
             container.style.backgroundSize = 'cover';
-            container.style.backgroundPosition = '15% 40%'; // Descentrado hacia la izquierda
+            container.style.backgroundPosition = '15% 40%';
             document.body.style.backgroundColor = '#0d0b04';
         } 
         else {
@@ -556,6 +556,7 @@
         userInput.value = '';
 
         try {
+            // Enviamos la pregunta Y el historial de conversación acumulado
             const response = await fetch(WORKER_BASE, {
                 method: 'POST',
                 headers: {
@@ -563,7 +564,10 @@
                     'X-User-Name': usuario,
                     'X-User-Pass': password
                 },
-                body: JSON.stringify({ pregunta: pregunta })
+                body: JSON.stringify({ 
+                    pregunta: pregunta,
+                    historial: historialLocal 
+                })
             });
 
             const data = await response.json();
