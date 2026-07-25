@@ -168,59 +168,163 @@
             border: 1px solid rgba(255, 0, 0, 0.3);
         }
 
-        /* ÁREA DE INGRESO DE TEXTO E IMÁGENES */
+        /* ÁREA DE INGRESO DE TEXTO - BARRA CÁPSULA ESTILO MODERNO */
         .input-area {
-            padding: 12px;
-            background-color: rgba(37, 37, 37, 0.85);
+            padding: 12px 16px 16px;
+            background-color: rgba(30, 30, 30, 0.85);
             backdrop-filter: blur(8px);
             display: flex;
             flex-direction: column;
             gap: 8px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
             z-index: 10;
         }
 
-        .input-controls {
+        .input-capsule {
             display: flex;
+            align-items: center;
+            background-color: #262626;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
+            padding: 6px 8px 6px 12px;
             gap: 8px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .input-capsule:focus-within {
+            border-color: rgba(255, 255, 255, 0.25);
+            background-color: #2d2d2d;
+        }
+
+        /* BOTÓN MÁS (+) Y MENÚ DESPLEGABLE DE ADJUNTAR */
+        .attach-wrapper {
+            position: relative;
+            display: flex;
             align-items: center;
         }
 
-        .input-area input[type="text"] {
-            flex: 1;
-            padding: 12px;
-            background-color: rgba(30, 30, 30, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #fff;
-            border-radius: 6px;
-            outline: none;
-            font-size: 15px;
+        .btn-attach {
+            background: rgba(255, 255, 255, 0.08);
+            color: #e0e0e0;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.2s, transform 0.2s;
+            line-height: 1;
         }
 
-        .btn-media {
-            padding: 10px 12px;
-            background-color: rgba(50, 50, 50, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        .btn-attach:hover {
+            background: rgba(255, 255, 255, 0.18);
             color: #fff;
-            border-radius: 6px;
+        }
+
+        .attach-menu {
+            display: none;
+            position: absolute;
+            bottom: 48px;
+            left: 0;
+            background-color: #2a2a2a;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 6px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            flex-direction: column;
+            gap: 4px;
+            z-index: 20;
+            min-width: 140px;
+        }
+
+        .attach-menu.show {
+            display: flex;
+        }
+
+        .attach-option {
+            background: transparent;
+            border: none;
+            color: #eee;
+            padding: 10px 12px;
+            text-align: left;
+            border-radius: 8px;
+            font-size: 13px;
             cursor: pointer;
-            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             transition: background 0.2s;
         }
 
-        .btn-media:hover {
-            background-color: rgba(70, 70, 70, 0.9);
+        .attach-option:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
-        .input-area button.btn-enviar {
-            padding: 12px 20px;
-            background-color: #3a3a3a;
-            color: #fff;
+        /* INPUT DE TEXTO DENTRO DE LA CÁPSULA */
+        .input-capsule input[type="text"] {
+            flex: 1;
+            background: transparent;
             border: none;
-            border-radius: 6px;
+            color: #fff;
+            outline: none;
+            font-size: 15px;
+            padding: 6px 4px;
+        }
+
+        .input-capsule input[type="text"]::placeholder {
+            color: #888;
+        }
+
+        /* BOTÓN DE MICRÓFONO */
+        .btn-mic {
+            background: transparent;
+            border: none;
+            color: #aaa;
+            font-size: 18px;
             cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: color 0.2s, background 0.2s;
+        }
+
+        .btn-mic:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* BOTÓN ENVIAR (CIRCULAR CÓN FLECHA) */
+        .btn-submit {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
             font-weight: bold;
-            font-size: 14px;
+            transition: background 0.2s, transform 0.1s;
+            flex-shrink: 0;
+        }
+
+        .btn-submit:hover {
+            background-color: #e0e0e0;
+            transform: scale(1.05);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.95);
         }
 
         /* CONTENEDOR DE VISTA PREVIA DE IMAGEN */
@@ -229,6 +333,7 @@
             position: relative;
             align-self: flex-start;
             margin-bottom: 4px;
+            margin-left: 8px;
         }
 
         .preview-container img {
@@ -412,11 +517,21 @@
             <button type="button" class="btn-quitar-img" onclick="quitarImagen()" title="Quitar imagen">✕</button>
         </div>
 
-        <div class="input-controls">
-            <button type="button" class="btn-media" onclick="document.getElementById('inputGaleria').click()" title="Adjuntar foto">🖼️</button>
-            <button type="button" class="btn-media" onclick="document.getElementById('inputCamara').click()" title="Sacar foto">📷</button>
+        <!-- CÁPSULA ESTILO MODERNO -->
+        <div class="input-capsule">
+            <div class="attach-wrapper">
+                <button type="button" class="btn-attach" onclick="toggleAttachMenu(event)" title="Adjuntar media">+</button>
+                <div class="attach-menu" id="attachMenu">
+                    <button type="button" class="attach-option" onclick="seleccionarOpcionAdjunto('galeria')">🖼️ Galería</button>
+                    <button type="button" class="attach-option" onclick="seleccionarOpcionAdjunto('camara')">📷 Cámara</button>
+                </div>
+            </div>
+
             <input type="text" id="userInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
-            <button class="btn-enviar" onclick="enviarMensaje()">Enviar</button>
+
+            <button type="button" class="btn-mic" id="btnMic" title="Dictado por voz">🎤</button>
+
+            <button type="button" class="btn-submit" onclick="enviarMensaje()" title="Enviar mensaje">↑</button>
         </div>
     </div>
 
@@ -509,6 +624,30 @@
             btnFondos.style.display = 'none';
         }
     }
+
+    // Menú desplegable del botón (+)
+    function toggleAttachMenu(e) {
+        e.stopPropagation();
+        const menu = document.getElementById('attachMenu');
+        menu.classList.toggle('show');
+    }
+
+    function seleccionarOpcionAdjunto(tipo) {
+        document.getElementById('attachMenu').classList.remove('show');
+        if (tipo === 'galeria') {
+            document.getElementById('inputGaleria').click();
+        } else if (tipo === 'camara') {
+            document.getElementById('inputCamara').click();
+        }
+    }
+
+    // Cerrar el menú si hace clic en cualquier otra parte de la pantalla
+    document.addEventListener('click', (e) => {
+        const menu = document.getElementById('attachMenu');
+        if (menu && menu.classList.contains('show')) {
+            menu.classList.remove('show');
+        }
+    });
 
     // Lógica para procesar la imagen elegida o capturada
     function procesarImagen(event) {
