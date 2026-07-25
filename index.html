@@ -168,18 +168,25 @@
             border: 1px solid rgba(255, 0, 0, 0.3);
         }
 
-        /* ÁREA DE INGRESO DE TEXTO */
+        /* ÁREA DE INGRESO DE TEXTO E IMÁGENES */
         .input-area {
             padding: 12px;
             background-color: rgba(37, 37, 37, 0.85);
             backdrop-filter: blur(8px);
             display: flex;
+            flex-direction: column;
             gap: 8px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 10;
         }
 
-        .input-area input {
+        .input-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .input-area input[type="text"] {
             flex: 1;
             padding: 12px;
             background-color: rgba(30, 30, 30, 0.8);
@@ -190,7 +197,22 @@
             font-size: 15px;
         }
 
-        .input-area button {
+        .btn-media {
+            padding: 10px 12px;
+            background-color: rgba(50, 50, 50, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .btn-media:hover {
+            background-color: rgba(70, 70, 70, 0.9);
+        }
+
+        .input-area button.btn-enviar {
             padding: 12px 20px;
             background-color: #3a3a3a;
             color: #fff;
@@ -199,6 +221,39 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 14px;
+        }
+
+        /* CONTENEDOR DE VISTA PREVIA DE IMAGEN */
+        .preview-container {
+            display: none;
+            position: relative;
+            align-self: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .preview-container img {
+            max-height: 80px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-quitar-img {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
         /* MODALES */
@@ -346,9 +401,23 @@
         <div class="message ia">¡Hola! Ingresá tu usuario y contraseña personal arriba para comenzar.</div>
     </div>
 
+    <!-- Inputs ocultos para archivo de la galería y foto de la cámara -->
+    <input type="file" id="inputGaleria" accept="image/*" style="display: none;" onchange="procesarImagen(event)">
+    <input type="file" id="inputCamara" accept="image/*" capture="environment" style="display: none;" onchange="procesarImagen(event)">
+
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
-        <button onclick="enviarMensaje()">Enviar</button>
+        <!-- Vista previa de la foto antes de enviar -->
+        <div class="preview-container" id="previewContainer">
+            <img id="imgPreview" src="" alt="Vista previa">
+            <button type="button" class="btn-quitar-img" onclick="quitarImagen()" title="Quitar imagen">✕</button>
+        </div>
+
+        <div class="input-controls">
+            <button type="button" class="btn-media" onclick="document.getElementById('inputGaleria').click()" title="Adjuntar foto">🖼️</button>
+            <button type="button" class="btn-media" onclick="document.getElementById('inputCamara').click()" title="Sacar foto">📷</button>
+            <input type="text" id="userInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
+            <button class="btn-enviar" onclick="enviarMensaje()">Enviar</button>
+        </div>
     </div>
 
     <!-- MODAL PAGO -->
@@ -360,7 +429,7 @@
             
             <ul>
                 <li>🎨 <b>Temas Visuales:</b> Cambiá colores y fondos personalizados.</li>
-                <li>🧠 <b>Respuestas Máximas:</b> Acceso a Gemini 3.1 Flash Lite.</li>
+                <li>🧠 <b>Respuestas Máximas:</b> Acceso a Gemini 3.5 Flash Lite.</li>
                 <li>⚡ <b>Uso Ilimitado:</b> Sin restricciones de mensajes diarios.</li>
             </ul>
 
@@ -408,6 +477,10 @@
 <script>
     const WORKER_BASE = "https://apikey.vgubertimartin.workers.dev";
     let historialLocal = [];
+    
+    // Variables para la gestión de imágenes
+    let imagenBase64Seleccionada = null;
+    let mimeTypeSeleccionado = null;
 
     // Modales
     function abrirModalPremium() { document.getElementById('modalPremium').style.display = 'flex'; }
@@ -437,23 +510,47 @@
         }
     }
 
+    // Lógica para procesar la imagen elegida o capturada
+    function procesarImagen(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        mimeTypeSeleccionado = file.type;
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            imagenBase64Seleccionada = reader.result;
+            document.getElementById('imgPreview').src = imagenBase64Seleccionada;
+            document.getElementById('previewContainer').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function quitarImagen() {
+        imagenBase64Seleccionada = null;
+        mimeTypeSeleccionado = null;
+        document.getElementById('imgPreview').src = '';
+        document.getElementById('previewContainer').style.display = 'none';
+        document.getElementById('inputGaleria').value = '';
+        document.getElementById('inputCamara').value = '';
+    }
+
     // Lógica para aplicar los fondos con las imágenes corregidas
     function aplicarFondo(estilo) {
         const container = document.getElementById('mainContainer');
         
-        // Limpiamos estilos previos
         container.style.backgroundColor = '';
         container.style.backgroundImage = '';
         container.style.backgroundRepeat = 'no-repeat';
 
         if (estilo === 'flores') {
-            container.style.backgroundImage = "url('estrellas.webp')"; // Intercambiado para arreglar el orden
+            container.style.backgroundImage = "url('estrellas.webp')";
             container.style.backgroundSize = 'cover';
             container.style.backgroundPosition = '25% 20%';
             document.body.style.backgroundColor = '#fdfbf7';
         } 
         else if (estilo === 'estrellas') {
-            container.style.backgroundImage = "url('flores.webp')"; // Intercambiado para arreglar el orden
+            container.style.backgroundImage = "url('flores.webp')";
             container.style.backgroundSize = 'cover';
             container.style.backgroundPosition = '70% 30%';
             document.body.style.backgroundColor = '#040814';
@@ -550,13 +647,28 @@
             return;
         }
 
-        if (!pregunta) return;
+        // Permitimos enviar si hay texto O si se adjuntó una foto
+        if (!pregunta && !imagenBase64Seleccionada) return;
 
-        agregarMensaje(pregunta, 'user', true);
+        // Mostrar indicación si envía una foto
+        let textoAMostrar = pregunta;
+        if (imagenBase64Seleccionada && !pregunta) {
+            textoAMostrar = "[Imagen enviada]";
+        } else if (imagenBase64Seleccionada && pregunta) {
+            textoAMostrar = "📷 " + pregunta;
+        }
+
+        agregarMensaje(textoAMostrar, 'user', true);
+        
+        // Guardamos copias locales para el fetch
+        const auxImagen = imagenBase64Seleccionada;
+        const auxMime = mimeTypeSeleccionado;
+
+        // Limpiamos los campos
         userInput.value = '';
+        quitarImagen();
 
         try {
-            // Enviamos la pregunta Y el historial de conversación acumulado
             const response = await fetch(WORKER_BASE, {
                 method: 'POST',
                 headers: {
@@ -566,6 +678,8 @@
                 },
                 body: JSON.stringify({ 
                     pregunta: pregunta,
+                    imagen: auxImagen,
+                    mimeType: auxMime,
                     historial: historialLocal 
                 })
             });
