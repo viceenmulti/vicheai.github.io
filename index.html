@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
-    <title>VichenAi</title>
+    <title>Vichen AI</title>
 
     <!-- CONFIGURACIÓN PWA -->
     <link rel="manifest" href="manifest.json">
@@ -502,6 +502,63 @@
             border-color: #ffd700;
         }
 
+        /* ESTILOS TUTORIAL PWA */
+        .modal-install {
+            border: 2px solid #00aeef;
+            box-shadow: 0 0 25px rgba(0, 174, 239, 0.25);
+        }
+
+        .pwa-step {
+            background-color: #1a1a1a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .pwa-step-num {
+            background-color: #00aeef;
+            color: #000;
+            font-weight: bold;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+
+        .pwa-step-text {
+            font-size: 13px;
+            color: #ddd;
+            line-height: 1.4;
+        }
+
+        .btn-install-pwa {
+            background: linear-gradient(135deg, #00aeef, #0077ff);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+            box-shadow: 0 4px 12px rgba(0, 174, 239, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .btn-install-pwa:active {
+            transform: scale(0.98);
+        }
+
         /* CELULARES */
         @media (max-width: 600px) {
             .chat-container { border-radius: 0; }
@@ -609,6 +666,23 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL TUTORIAL INSTALACIÓN PWA -->
+    <div class="modal-overlay" id="modalInstallPWA">
+        <div class="modal-card modal-install">
+            <button class="btn-close-modal" onclick="cerrarModalInstall()">✕</button>
+            <h2 id="installTitle" style="color: #00aeef;">Instalar Vichen AI 📲</h2>
+            <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Instalá la app para acceder directo desde tu pantalla de inicio sin usar navegador.</p>
+            
+            <div id="pwaInstructions">
+                <!-- Se completa dinámicamente según el sistema (iOS o Android) -->
+            </div>
+
+            <button type="button" class="btn-install-pwa" id="btnActionInstall" style="display: none;" onclick="activarInstalacionAndroid()">
+                ⚡ Instalar App Ahora
+            </button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -622,6 +696,9 @@
     // Variables para el dictado por voz
     let recognition = null;
     let isListening = false;
+
+    // Variable para captura de evento de instalación PWA en Android
+    let deferredPrompt = null;
 
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -684,6 +761,10 @@
     function cerrarModalPremium() { document.getElementById('modalPremium').style.display = 'none'; }
     function abrirModalFondos() { document.getElementById('modalFondos').style.display = 'flex'; }
     function cerrarModalFondos() { document.getElementById('modalFondos').style.display = 'none'; }
+    function cerrarModalInstall() { 
+        document.getElementById('modalInstallPWA').style.display = 'none'; 
+        localStorage.setItem('pwaTutorialVisto', 'true');
+    }
 
     function copiarAlias() {
         const alias = document.getElementById('aliasTexto').innerText;
@@ -953,16 +1034,91 @@
         }
     }
 
-    // REGISTRO DEL SERVICE WORKER
+    /* REGISTRO DE SERVICE WORKER PARA PWA */
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(() => {
-                console.log('Service Worker registrado con éxito.');
-            }).catch((err) => {
-                console.log('Error al registrar el Service Worker:', err);
-            });
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker registrado con éxito', reg))
+                .catch(err => console.error('Error registrando Service Worker', err));
         });
     }
+
+    /* LÓGICA DE DETECCIÓN E INSTALACIÓN INTELIGENTE DE PWA */
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        mostrarTutorialPWA('android');
+    });
+
+    function activarInstalacionAndroid() {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('El usuario aceptó instalar la PWA');
+            }
+            deferredPrompt = null;
+            cerrarModalInstall();
+        });
+    }
+
+    function mostrarTutorialPWA(sistema) {
+        // Verificar si la PWA ya está corriendo en modo App (Standalone)
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        if (isStandalone) return; 
+
+        // Si ya vio el tutorial anteriormente y lo cerró, no molestar
+        if (localStorage.getItem('pwaTutorialVisto') === 'true') return;
+
+        const container = document.getElementById('pwaInstructions');
+        const btnAction = document.getElementById('btnActionInstall');
+        container.innerHTML = '';
+
+        if (sistema === 'ios') {
+            container.innerHTML = `
+                <div class="pwa-step">
+                    <div class="pwa-step-num">1</div>
+                    <div class="pwa-step-text">Tocá el botón <b>Compartir</b> <span style="font-size:16px;">⎋</span> en la barra inferior de Safari.</div>
+                </div>
+                <div class="pwa-step">
+                    <div class="pwa-step-num">2</div>
+                    <div class="pwa-step-text">Buscá la opción <b>"Agregar a inicio"</b> <span style="font-size:16px;">➕</span> y presioná "Agregar".</div>
+                </div>
+            `;
+            btnAction.style.display = 'none';
+            document.getElementById('modalInstallPWA').style.display = 'flex';
+        } else if (sistema === 'android') {
+            container.innerHTML = `
+                <div class="pwa-step">
+                    <div class="pwa-step-num">1</div>
+                    <div class="pwa-step-text">Tocá el botón azul de abajo para instalar la app directamente en tu celular.</div>
+                </div>
+                <div class="pwa-step">
+                    <div class="pwa-step-num">2</div>
+                    <div class="pwa-step-text">O tocá los <b>3 puntos</b> arriba en Chrome y seleccioná <b>"Instalar aplicación"</b>.</div>
+                </div>
+            `;
+            btnAction.style.display = 'block';
+            document.getElementById('modalInstallPWA').style.display = 'flex';
+        }
+    }
+
+    // Comprobación al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+        const isAndroid = /android/i.test(userAgent);
+
+        if (isIOS) {
+            mostrarTutorialPWA('ios');
+        } else if (isAndroid && !deferredPrompt) {
+            // Si es Android pero el navegador aún no disparó `beforeinstallprompt`,
+            // le mostramos los pasos manuales tras 2 segundos.
+            setTimeout(() => {
+                mostrarTutorialPWA('android');
+            }, 2000);
+        }
+    });
 </script>
 
 </body>
