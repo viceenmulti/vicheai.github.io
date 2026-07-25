@@ -1,6 +1,6 @@
 {
-  "name": "Asistente Minimalista",
-  "short_name": "Asistente",
+  "name": "VichenAi",
+  "short_name": "VicheAi",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#121212",
