@@ -606,7 +606,7 @@
                 agregarMensaje("No tenés chats guardados aún para este usuario.", 'ia', false);
                 historialLocal = [];
             } else {
-                historialLocal.forEach(msg => agregarMensaje(msg.texto, msg.tipo, false));
+                historialLocal.forEach(msg => agregarMensaje(msg.texto, msg.tipo, false, msg.imagenUrl));
             }
 
         } catch (err) {
@@ -647,24 +647,17 @@
             return;
         }
 
-        // Permitimos enviar si hay texto O si se adjuntó una foto
         if (!pregunta && !imagenBase64Seleccionada) return;
 
-        // Mostrar indicación si envía una foto
-        let textoAMostrar = pregunta;
-        if (imagenBase64Seleccionada && !pregunta) {
-            textoAMostrar = "[Imagen enviada]";
-        } else if (imagenBase64Seleccionada && pregunta) {
-            textoAMostrar = "📷 " + pregunta;
-        }
+        // Pregunta por defecto si envía foto sin escribir nada
+        const preguntaFinal = pregunta || (imagenBase64Seleccionada ? "Describe o analiza esta imagen." : "");
 
-        agregarMensaje(textoAMostrar, 'user', true);
+        // Renderiza el mensaje en pantalla (con la imagen si existe)
+        agregarMensaje(preguntaFinal, 'user', true, imagenBase64Seleccionada);
         
-        // Guardamos copias locales para el fetch
         const auxImagen = imagenBase64Seleccionada;
         const auxMime = mimeTypeSeleccionado;
 
-        // Limpiamos los campos
         userInput.value = '';
         quitarImagen();
 
@@ -677,7 +670,7 @@
                     'X-User-Pass': password
                 },
                 body: JSON.stringify({ 
-                    pregunta: pregunta,
+                    pregunta: preguntaFinal,
                     imagen: auxImagen,
                     mimeType: auxMime,
                     historial: historialLocal 
@@ -703,16 +696,34 @@
         }
     }
 
-    function agregarMensaje(texto, tipo, guardarEnMemoria = true) {
+    function agregarMensaje(texto, tipo, guardarEnMemoria = true, imagenUrl = null) {
         const chatBox = document.getElementById('chatBox');
         const msgDiv = document.createElement('div');
         msgDiv.classList.add('message', tipo);
-        msgDiv.textContent = texto;
+
+        // Si se adjunta imagen, se dibuja en la burbuja
+        if (imagenUrl) {
+            const img = document.createElement('img');
+            img.src = imagenUrl;
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '200px';
+            img.style.borderRadius = '8px';
+            img.style.marginBottom = '8px';
+            img.style.display = 'block';
+            msgDiv.appendChild(img);
+        }
+
+        if (texto) {
+            const textSpan = document.createElement('span');
+            textSpan.textContent = texto;
+            msgDiv.appendChild(textSpan);
+        }
+
         chatBox.appendChild(msgDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
 
         if (guardarEnMemoria) {
-            historialLocal.push({ texto, tipo });
+            historialLocal.push({ texto, tipo, imagenUrl });
         }
     }
 
