@@ -3,7 +3,15 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
-    <title>Asistente Minimalista con Cuentas Personalizadas</title>
+    <title>Asistente Minimalista</title>
+
+    <!-- CONFIGURACIÓN PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e1e1e">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
     <style>
         * {
             box-sizing: border-box;
@@ -302,7 +310,6 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* ESTADO GRABANDO (MICRÓFONO) */
         .btn-mic.listening {
             color: #ff4d4d;
             background: rgba(255, 77, 77, 0.2);
@@ -616,7 +623,6 @@
     let recognition = null;
     let isListening = false;
 
-    // Inicializar API de reconocimiento de voz si está disponible
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognition = new SpeechRecognition();
@@ -717,7 +723,6 @@
         }
     }
 
-    // Cerrar el menú si hace clic en cualquier otra parte de la pantalla
     document.addEventListener('click', (e) => {
         const menu = document.getElementById('attachMenu');
         if (menu && menu.classList.contains('show')) {
@@ -725,7 +730,6 @@
         }
     });
 
-    // Lógica para procesar la imagen elegida o capturada
     function procesarImagen(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -750,7 +754,6 @@
         document.getElementById('inputCamara').value = '';
     }
 
-    // Lógica para aplicar los fondos
     function aplicarFondo(estilo) {
         const container = document.getElementById('mainContainer');
         
@@ -852,7 +855,6 @@
     }
 
     async function enviarMensaje() {
-        // Detener micrófono si estaba escuchando al momento de enviar
         if (isListening && recognition) {
             recognition.stop();
             detenerDictado();
@@ -949,6 +951,17 @@
         if (e.key === 'Enter') {
             enviarMensaje();
         }
+    }
+
+    // REGISTRO DEL SERVICE WORKER
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then(() => {
+                console.log('Service Worker registrado con éxito.');
+            }).catch((err) => {
+                console.log('Error al registrar el Service Worker:', err);
+            });
+        });
     }
 </script>
 
