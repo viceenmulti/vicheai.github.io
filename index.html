@@ -292,7 +292,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: color 0.2s, background 0.2s;
+            transition: color 0.2s, background 0.2s, transform 0.2s;
+            width: 34px;
+            height: 34px;
         }
 
         .btn-mic:hover {
@@ -300,7 +302,20 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* BOTÓN ENVIAR (CIRCULAR CÓN FLECHA) */
+        /* ESTADO GRABANDO (MICRÓFONO) */
+        .btn-mic.listening {
+            color: #ff4d4d;
+            background: rgba(255, 77, 77, 0.2);
+            animation: pulse-mic 1.2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-mic {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(255, 77, 77, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+        }
+
+        /* BOTÓN ENVIAR (CIRCULAR CON FLECHA) */
         .btn-submit {
             width: 36px;
             height: 36px;
@@ -529,7 +544,7 @@
 
             <input type="text" id="userInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
 
-            <button type="button" class="btn-mic" id="btnMic" title="Dictado por voz">🎤</button>
+            <button type="button" class="btn-mic" id="btnMic" onclick="toggleDictadoVoz()" title="Dictado por voz">🎤</button>
 
             <button type="button" class="btn-submit" onclick="enviarMensaje()" title="Enviar mensaje">↑</button>
         </div>
@@ -596,6 +611,67 @@
     // Variables para la gestión de imágenes
     let imagenBase64Seleccionada = null;
     let mimeTypeSeleccionado = null;
+
+    // Variables para el dictado por voz
+    let recognition = null;
+    let isListening = false;
+
+    // Inicializar API de reconocimiento de voz si está disponible
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = 'es-ES';
+        recognition.continuous = false;
+        recognition.interimResults = true;
+
+        recognition.onresult = (event) => {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+            document.getElementById('userInput').value = transcript;
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Error en reconocimiento de voz:", event.error);
+            detenerDictado();
+        };
+
+        recognition.onend = () => {
+            detenerDictado();
+        };
+    }
+
+    function toggleDictadoVoz() {
+        if (!recognition) {
+            alert("Tu navegador no soporta el reconocimiento de voz por micrófono.");
+            return;
+        }
+
+        if (isListening) {
+            recognition.stop();
+            detenerDictado();
+        } else {
+            try {
+                recognition.start();
+                isListening = true;
+                const btnMic = document.getElementById('btnMic');
+                btnMic.classList.add('listening');
+                btnMic.title = "Escuchando... Tocá para detener";
+            } catch (e) {
+                console.error("Error al iniciar el micrófono:", e);
+            }
+        }
+    }
+
+    function detenerDictado() {
+        isListening = false;
+        const btnMic = document.getElementById('btnMic');
+        if (btnMic) {
+            btnMic.classList.remove('listening');
+            btnMic.title = "Dictado por voz";
+        }
+    }
 
     // Modales
     function abrirModalPremium() { document.getElementById('modalPremium').style.display = 'flex'; }
@@ -674,7 +750,7 @@
         document.getElementById('inputCamara').value = '';
     }
 
-    // Lógica para aplicar los fondos con las imágenes corregidas
+    // Lógica para aplicar los fondos
     function aplicarFondo(estilo) {
         const container = document.getElementById('mainContainer');
         
@@ -776,6 +852,12 @@
     }
 
     async function enviarMensaje() {
+        // Detener micrófono si estaba escuchando al momento de enviar
+        if (isListening && recognition) {
+            recognition.stop();
+            detenerDictado();
+        }
+
         const usuario = document.getElementById('userInputName').value.trim();
         const password = document.getElementById('passInput').value.trim();
         const userInput = document.getElementById('userInput');
@@ -788,10 +870,8 @@
 
         if (!pregunta && !imagenBase64Seleccionada) return;
 
-        // Pregunta por defecto si envía foto sin escribir nada
         const preguntaFinal = pregunta || (imagenBase64Seleccionada ? "Describe o analiza esta imagen." : "");
 
-        // Renderiza el mensaje en pantalla (con la imagen si existe)
         agregarMensaje(preguntaFinal, 'user', true, imagenBase64Seleccionada);
         
         const auxImagen = imagenBase64Seleccionada;
@@ -840,7 +920,6 @@
         const msgDiv = document.createElement('div');
         msgDiv.classList.add('message', tipo);
 
-        // Si se adjunta imagen, se dibuja en la burbuja
         if (imagenUrl) {
             const img = document.createElement('img');
             img.src = imagenUrl;
