@@ -79,22 +79,23 @@
             box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
         }
 
-        /* BOTÓN HAMBURGUESA / MENÚ PREMIUM (REEMPLAZA AL BOTÓN FONDOS) */
-        .btn-menu-premium {
+        /* BOTÓN DE FONDOS */
+        .btn-fondos {
             display: none;
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffd700;
-            border: 1px solid rgba(255, 215, 0, 0.4);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 18px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 12px;
             cursor: pointer;
-            transition: background 0.2s, transform 0.2s;
-            line-height: 1;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+            transition: transform 0.2s;
+            white-space: nowrap;
         }
 
-        .btn-menu-premium:hover {
-            background: rgba(255, 215, 0, 0.2);
+        .btn-fondos:hover {
             transform: scale(1.05);
         }
 
@@ -124,119 +125,6 @@
 
         .header button.btn-cargar:active {
             background-color: #555;
-        }
-
-        /* BARRA LATERAL (SIDEBAR PREMIUM) */
-        .sidebar-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 90;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar-overlay.active {
-            display: block;
-            opacity: 1;
-        }
-
-        .sidebar {
-            position: absolute;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background-color: #1a1a1a;
-            border-right: 1px solid rgba(255, 215, 0, 0.3);
-            z-index: 95;
-            display: flex;
-            flex-direction: column;
-            padding: 20px 15px;
-            gap: 20px;
-            overflow-y: auto;
-            transition: left 0.3s ease;
-            box-shadow: 5px 0 20px rgba(0,0,0,0.5);
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 10px;
-        }
-
-        .sidebar-header h3 {
-            color: #ffd700;
-            font-size: 16px;
-        }
-
-        .btn-close-sidebar {
-            background: none;
-            border: none;
-            color: #aaa;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .sidebar-section-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #888;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
-        /* BOTOENS DEL SIDEBAR */
-        .sidebar-btn {
-            width: 100%;
-            padding: 10px 12px;
-            background: #252525;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: #ddd;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: left;
-            font-size: 13px;
-            margin-bottom: 6px;
-            transition: background 0.2s, border-color 0.2s, transform 0.1s;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .sidebar-btn:hover {
-            background: #303030;
-            border-color: rgba(255, 215, 0, 0.4);
-            color: #fff;
-        }
-
-        .sidebar-btn.active {
-            border-color: #ffd700;
-            background: rgba(255, 215, 0, 0.1);
-            color: #ffd700;
-        }
-
-        .sidebar-btn span.title {
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        .sidebar-btn span.desc {
-            font-size: 11px;
-            color: #aaa;
-            line-height: 1.2;
         }
 
         /* ÁREA DE CHAT */
@@ -288,7 +176,7 @@
             border: 1px solid rgba(255, 0, 0, 0.3);
         }
 
-        /* ÁREA DE INGRESO DE TEXTO */
+        /* ÁREA DE INGRESO DE TEXTO - BARRA CÁPSULA ESTILO MODERNO */
         .input-area {
             padding: 12px 16px 16px;
             background-color: rgba(30, 30, 30, 0.85);
@@ -318,6 +206,7 @@
             background-color: #2d2d2d;
         }
 
+        /* BOTÓN MÁS (+) Y MENÚ DESPLEGABLE DE ADJUNTAR */
         .attach-wrapper {
             position: relative;
             display: flex;
@@ -384,6 +273,7 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
 
+        /* INPUT DE TEXTO DENTRO DE LA CÁPSULA */
         .input-capsule input[type="text"] {
             flex: 1;
             background: transparent;
@@ -398,6 +288,7 @@
             color: #888;
         }
 
+        /* BOTÓN DE MICRÓFONO */
         .btn-mic {
             background: transparent;
             border: none;
@@ -431,6 +322,7 @@
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
         }
 
+        /* BOTÓN ENVIAR (CIRCULAR CON FLECHA) */
         .btn-submit {
             width: 36px;
             height: 36px;
@@ -457,6 +349,7 @@
             transform: scale(0.95);
         }
 
+        /* CONTENEDOR DE VISTA PREVIA DE IMAGEN */
         .preview-container {
             display: none;
             position: relative;
@@ -582,11 +475,95 @@
             cursor: pointer;
         }
 
+        /* OPCIONES DE FONDOS */
+        .fondos-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-opcion-fondo {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .btn-opcion-fondo:hover {
+            transform: translateX(4px);
+            border-color: #ffd700;
+        }
+
+        /* ESTILOS TUTORIAL PWA */
+        .modal-install {
+            border: 2px solid #00aeef;
+            box-shadow: 0 0 25px rgba(0, 174, 239, 0.25);
+        }
+
+        .pwa-step {
+            background-color: #1a1a1a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .pwa-step-num {
+            background-color: #00aeef;
+            color: #000;
+            font-weight: bold;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+
+        .pwa-step-text {
+            font-size: 13px;
+            color: #ddd;
+            line-height: 1.4;
+        }
+
+        .btn-install-pwa {
+            background: linear-gradient(135deg, #00aeef, #0077ff);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+            box-shadow: 0 4px 12px rgba(0, 174, 239, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .btn-install-pwa:active {
+            transform: scale(0.98);
+        }
+
         /* CELULARES */
         @media (max-width: 600px) {
             .chat-container { border-radius: 0; }
             .header { padding: 8px; gap: 6px; }
-            .btn-premium { width: 100%; text-align: center; order: -1; }
+            .btn-premium, .btn-fondos { width: 100%; text-align: center; order: -1; }
             .header button.btn-cargar { flex: 1; }
             .message { max-width: 90%; font-size: 14px; }
         }
@@ -597,68 +574,11 @@
 <div class="chat-container" id="mainContainer">
     <div class="header">
         <button class="btn-premium" id="btnPremium" onclick="abrirModalPremium()">🌟 Volverse Premium ($1500)</button>
-        <button class="btn-menu-premium" id="btnMenuPremium" onclick="toggleSidebar()" title="Menú Premium">☰</button>
+        <button class="btn-fondos" id="btnFondos" onclick="abrirModalFondos()">🎨 Elegir Fondo</button>
         
         <input type="text" id="userInputName" placeholder="Usuario">
         <input type="password" id="passInput" placeholder="Tu Contraseña">
         <button class="btn-cargar" onclick="cargarHistorial()">Cargar Chats</button>
-    </div>
-
-    <!-- OVERLAY Y SIDEBAR LATERAL DE OPCIONES PREMIUM -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="cerrarSidebar()"></div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3>Panel Premium 🌟</h3>
-            <button class="btn-close-sidebar" onclick="cerrarSidebar()">✕</button>
-        </div>
-
-        <div>
-            <div class="sidebar-section-title">🎨 Personalizar Fondo</div>
-            <button class="sidebar-btn" onclick="aplicarFondo('gris')">
-                <span class="title">🌑 Gris Minimalista</span>
-                <span class="desc">Predeterminado</span>
-            </button>
-            <button class="sidebar-btn" onclick="aplicarFondo('flores')">
-                <span class="title">🌸 Jardín Floral</span>
-                <span class="desc">Flores.webp</span>
-            </button>
-            <button class="sidebar-btn" onclick="aplicarFondo('estrellas')">
-                <span class="title">🌌 Noche Estrellada</span>
-                <span class="desc">Estrellas.webp</span>
-            </button>
-            <button class="sidebar-btn" onclick="aplicarFondo('oro')">
-                <span class="title">🏆 Dorado VIP</span>
-                <span class="desc">Oro.webp</span>
-            </button>
-        </div>
-
-        <div>
-            <div class="sidebar-section-title">⚙️ Modos de Respuesta</div>
-            <button class="sidebar-btn active" id="btn-modo-normal" onclick="cambiarModo('normal')">
-                <span class="title">🤖 Modo Estándar</span>
-                <span class="desc">Respuesta normal y equilibrada.</span>
-            </button>
-            <button class="sidebar-btn" id="btn-modo-estudio" onclick="cambiarModo('estudio')">
-                <span class="title">🎓 Modo Estudio / Explicativo</span>
-                <span class="desc">Explicaciones pedagógicas, paso a paso y preguntas.</span>
-            </button>
-            <button class="sidebar-btn" id="btn-modo-chill" onclick="cambiarModo('chill')">
-                <span class="title">☕ Modo Chill / Informal</span>
-                <span class="desc">Vibra relajada, rioplatense, corto y al grano.</span>
-            </button>
-            <button class="sidebar-btn" id="btn-modo-programador" onclick="cambiarModo('programador')">
-                <span class="title">💻 Modo Programador / Técnico</span>
-                <span class="desc">Directo al código sin rodeos y bien estructurado.</span>
-            </button>
-            <button class="sidebar-btn" id="btn-modo-creativo" onclick="cambiarModo('creativo')">
-                <span class="title">🎨 Modo Creativo / Brainstorming</span>
-                <span class="desc">Ideas fuera de la caja, mecánicas y diseño.</span>
-            </button>
-            <button class="sidebar-btn" id="btn-modo-resumen" onclick="cambiarModo('resumen')">
-                <span class="title">📝 Modo Resumen / Síntesis Express</span>
-                <span class="desc">Puntos clave, viñetas y lectura rápida.</span>
-            </button>
-        </div>
     </div>
 
     <div class="chat-box" id="chatBox">
@@ -719,6 +639,34 @@
         </div>
     </div>
 
+    <!-- MODAL FONDOS -->
+    <div class="modal-overlay" id="modalFondos">
+        <div class="modal-card">
+            <button class="btn-close-modal" onclick="cerrarModalFondos()">✕</button>
+            <h2>Personalizar Fondo 🎨</h2>
+            <p style="font-size: 13px; color: #aaa;">Elegí el estilo visual de tu chat:</p>
+            
+            <div class="fondos-grid">
+                <button class="btn-opcion-fondo" style="background-color: #1e1e1e;" onclick="aplicarFondo('gris')">
+                    <span>🌑 Gris Minimalista</span>
+                    <span style="font-size: 11px; color: #888;">Predeterminado</span>
+                </button>
+                <button class="btn-opcion-fondo" style="background-color: #fcf8f2; color: #333;" onclick="aplicarFondo('flores')">
+                    <span>🌸 Jardin Floral</span>
+                    <span style="font-size: 11px; color: #b85b82;">Flores.webp</span>
+                </button>
+                <button class="btn-opcion-fondo" style="background-color: #080f1e;" onclick="aplicarFondo('estrellas')">
+                    <span>🌌 Noche Estrellada</span>
+                    <span style="font-size: 11px; color: #00e5ff;">Estrellas.webp</span>
+                </button>
+                <button class="btn-opcion-fondo" style="background-color: #1a1402;" onclick="aplicarFondo('oro')">
+                    <span>🏆 Dorado VIP</span>
+                    <span style="font-size: 11px; color: #ffd700;">Oro.webp</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL TUTORIAL INSTALACIÓN PWA -->
     <div class="modal-overlay" id="modalInstallPWA">
         <div class="modal-card modal-install">
@@ -726,7 +674,9 @@
             <h2 id="installTitle" style="color: #00aeef;">Instalar Vichen AI 📲</h2>
             <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Instalá la app para acceder directo desde tu pantalla de inicio sin usar navegador.</p>
             
-            <div id="pwaInstructions"></div>
+            <div id="pwaInstructions">
+                <!-- Se completa dinámicamente según el sistema (iOS o Android) -->
+            </div>
 
             <button type="button" class="btn-install-pwa" id="btnActionInstall" style="display: none;" onclick="activarInstalacionAndroid()">
                 ⚡ Instalar App Ahora
@@ -747,16 +697,8 @@
     let recognition = null;
     let isListening = false;
 
-    // Modos de IA
-    let modoSeleccionado = 'normal';
-    const promptsModos = {
-        normal: "",
-        estudio: "Modo Estudio/Explicativo: Explica temas con claridad pedagógica, usa ejemplos sencillos, desglosa conceptos complejos paso a paso y hace preguntas al final para evaluar si entendiste. Ideal para la escuela/secundaria.",
-        chill: "Modo Chill/Informal: Habla como un amigo relajado, de forma concisa, usando lenguaje amigable y cotidiano (con toque casual/rioplatense). Respuestas cortas, sin rodeos ni formalidades.",
-        programador: "Modo Programador/Técnico: Da directo el código sin explicaciones innecesarias, con comentarios limpios y estructurados.",
-        creativo: "Modo Creativo/Brainstorming: Propone ideas fuera de la caja, diseños, historias, mecánicas de juegos o nombres creativos.",
-        resumen: "Modo Resumen/Síntesis Express: Va al grano utilizando puntos clave, viñetas y resúmenes ultrawin. Ideal para leer rápido."
-    };
+    // Variable para captura de evento de instalación PWA en Android
+    let deferredPrompt = null;
 
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -814,30 +756,11 @@
         }
     }
 
-    // Funciones para Sidebar
-    function toggleSidebar() {
-        document.getElementById('sidebarOverlay').classList.toggle('active');
-        document.getElementById('sidebar').classList.toggle('active');
-    }
-
-    function cerrarSidebar() {
-        document.getElementById('sidebarOverlay').classList.remove('active');
-        document.getElementById('sidebar').classList.remove('active');
-    }
-
-    function cambiarModo(modo) {
-        modoSeleccionado = modo;
-        document.querySelectorAll('.sidebar-btn').forEach(btn => {
-            if(btn.id.startsWith('btn-modo-')) btn.classList.remove('active');
-        });
-        const activeBtn = document.getElementById(`btn-modo-${modo}`);
-        if (activeBtn) activeBtn.classList.add('active');
-        cerrarSidebar();
-    }
-
     // Modales
     function abrirModalPremium() { document.getElementById('modalPremium').style.display = 'flex'; }
     function cerrarModalPremium() { document.getElementById('modalPremium').style.display = 'none'; }
+    function abrirModalFondos() { document.getElementById('modalFondos').style.display = 'flex'; }
+    function cerrarModalFondos() { document.getElementById('modalFondos').style.display = 'none'; }
     function cerrarModalInstall() { 
         document.getElementById('modalInstallPWA').style.display = 'none'; 
         localStorage.setItem('pwaTutorialVisto', 'true');
@@ -854,15 +777,14 @@
 
     function actualizarModoPremium(esPremium) {
         const btnPremium = document.getElementById('btnPremium');
-        const btnMenuPremium = document.getElementById('btnMenuPremium');
+        const btnFondos = document.getElementById('btnFondos');
 
         if (esPremium) {
             btnPremium.style.display = 'none';
-            btnMenuPremium.style.display = 'inline-block';
+            btnFondos.style.display = 'inline-block';
         } else {
             btnPremium.style.display = 'inline-block';
-            btnMenuPremium.style.display = 'none';
-            cerrarSidebar();
+            btnFondos.style.display = 'none';
         }
     }
 
@@ -921,13 +843,13 @@
         container.style.backgroundRepeat = 'no-repeat';
 
         if (estilo === 'flores') {
-            container.style.backgroundImage = "url('flores.webp')";
+            container.style.backgroundImage = "url('estrellas.webp')";
             container.style.backgroundSize = 'cover';
             container.style.backgroundPosition = '25% 20%';
             document.body.style.backgroundColor = '#fdfbf7';
         } 
         else if (estilo === 'estrellas') {
-            container.style.backgroundImage = "url('estrellas.webp')";
+            container.style.backgroundImage = "url('flores.webp')";
             container.style.backgroundSize = 'cover';
             container.style.backgroundPosition = '70% 30%';
             document.body.style.backgroundColor = '#040814';
@@ -942,7 +864,7 @@
             container.style.backgroundColor = '#1e1e1e';
             document.body.style.backgroundColor = '#121212';
         }
-        cerrarSidebar();
+        cerrarModalFondos();
     }
 
     async function cargarHistorial() {
@@ -998,7 +920,8 @@
         if (!usuario || !password) return;
 
         try {
-            await fetch(`${WORKER_BASE}/guardar-chats`, {
+            const url = `${WORKER_BASE}/guardar-chat`;
+            await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1007,36 +930,101 @@
                 },
                 body: JSON.stringify({ chats: historialLocal })
             });
-        } catch (err) {
-            console.error("Error al guardar historial:", err);
+        } catch (e) {
+            console.error("Error guardando en KV:", e);
         }
     }
 
-    function agregarMensaje(texto, tipo, guardar = true, imagenUrl = null) {
+    async function enviarMensaje() {
+        if (isListening && recognition) {
+            recognition.stop();
+            detenerDictado();
+        }
+
+        const usuario = document.getElementById('userInputName').value.trim();
+        const password = document.getElementById('passInput').value.trim();
+        const userInput = document.getElementById('userInput');
+        const pregunta = userInput.value.trim();
+
+        if (!usuario || !password) {
+            alert("Por favor ingresa tu usuario y contraseña arriba.");
+            return;
+        }
+
+        if (!pregunta && !imagenBase64Seleccionada) return;
+
+        const preguntaFinal = pregunta || (imagenBase64Seleccionada ? "Describe o analiza esta imagen." : "");
+
+        agregarMensaje(preguntaFinal, 'user', true, imagenBase64Seleccionada);
+        
+        const auxImagen = imagenBase64Seleccionada;
+        const auxMime = mimeTypeSeleccionado;
+
+        userInput.value = '';
+        quitarImagen();
+
+        try {
+            const response = await fetch(WORKER_BASE, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-User-Name': usuario,
+                    'X-User-Pass': password
+                },
+                body: JSON.stringify({ 
+                    pregunta: preguntaFinal,
+                    imagen: auxImagen,
+                    mimeType: auxMime,
+                    historial: historialLocal 
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.isPremium !== undefined) {
+                actualizarModoPremium(data.isPremium);
+            }
+
+            if (response.ok && data.candidates && data.candidates[0].content.parts[0].text) {
+                const respuestaIA = data.candidates[0].content.parts[0].text;
+                agregarMensaje(respuestaIA, 'ia', true);
+                await guardarHistorial();
+            } else {
+                const errMsj = data.error || "Error en la respuesta del servidor.";
+                agregarMensaje("Error: " + errMsj, 'error', false);
+            }
+        } catch (error) {
+            agregarMensaje("Error de conexión: " + error.message, 'error', false);
+        }
+    }
+
+    function agregarMensaje(texto, tipo, guardarEnMemoria = true, imagenUrl = null) {
         const chatBox = document.getElementById('chatBox');
-        const div = document.createElement('div');
-        div.classList.add('message', tipo);
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message', tipo);
 
         if (imagenUrl) {
             const img = document.createElement('img');
             img.src = imagenUrl;
             img.style.maxWidth = '100%';
+            img.style.maxHeight = '200px';
             img.style.borderRadius = '8px';
             img.style.marginBottom = '8px';
             img.style.display = 'block';
-            div.appendChild(img);
+            msgDiv.appendChild(img);
         }
 
-        const spanTexto = document.createElement('span');
-        spanTexto.innerText = texto;
-        div.appendChild(spanTexto);
+        if (texto) {
+            const textSpan = document.createElement('span');
+            textSpan.textContent = texto;
+            msgDiv.appendChild(textSpan);
+        }
 
-        chatBox.appendChild(div);
+        chatBox.appendChild(msgDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
 
-        if (guardar && tipo !== 'error') {
+        if (guardarEnMemoria) {
             historialLocal.push({ texto, tipo, imagenUrl });
-            guardarHistorial();
         }
     }
 
@@ -1046,76 +1034,92 @@
         }
     }
 
-    async function enviarMensaje() {
-        const input = document.getElementById('userInput');
-        const texto = input.value.trim();
-        const usuario = document.getElementById('userInputName').value.trim();
-        const password = document.getElementById('passInput').value.trim();
+    /* REGISTRO DE SERVICE WORKER PARA PWA */
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Service Worker registrado con éxito', reg))
+                .catch(err => console.error('Error registrando Service Worker', err));
+        });
+    }
 
-        if (!texto && !imagenBase64Seleccionada) return;
+    /* LÓGICA DE DETECCIÓN E INSTALACIÓN INTELIGENTE DE PWA */
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        mostrarTutorialPWA('android');
+    });
 
-        if (!usuario || !password) {
-            alert("Por favor ingresa un usuario y contraseña en la parte superior.");
-            return;
-        }
-
-        let imagenAdjuntaEnviada = imagenBase64Seleccionada;
-        let mimeAdjuntoEnviado = mimeTypeSeleccionado;
-
-        agregarMensaje(texto || "📷 [Imagen enviada]", 'user', true, imagenAdjuntaEnviada);
-        input.value = '';
-        quitarImagen();
-
-        const loadingMsg = document.createElement('div');
-        loadingMsg.classList.add('message', 'ia');
-        loadingMsg.innerText = "Pensando...";
-        loadingMsg.id = "temp-loading";
-        document.getElementById('chatBox').appendChild(loadingMsg);
-
-        try {
-            const promptSistemaModo = promptsModos[modoSeleccionado];
-            let payloadPrompt = texto;
-            if (promptSistemaModo) {
-                payloadPrompt = `[INSTRUCCIÓN DE MODO: ${promptSistemaModo}]\n\n${texto}`;
+    function activarInstalacionAndroid() {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('El usuario aceptó instalar la PWA');
             }
+            deferredPrompt = null;
+            cerrarModalInstall();
+        });
+    }
 
-            const bodyPayload = {
-                prompt: payloadPrompt,
-                history: historialLocal.slice(0, -1)
-            };
+    function mostrarTutorialPWA(sistema) {
+        // Verificar si la PWA ya está corriendo en modo App (Standalone)
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        if (isStandalone) return; 
 
-            if (imagenAdjuntaEnviada) {
-                bodyPayload.image = imagenAdjuntaEnviada;
-                bodyPayload.mimeType = mimeAdjuntoEnviado;
-            }
+        // Si ya vio el tutorial anteriormente y lo cerró, no molestar
+        if (localStorage.getItem('pwaTutorialVisto') === 'true') return;
 
-            const response = await fetch(`${WORKER_BASE}/chat`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-User-Name': usuario,
-                    'X-User-Pass': password
-                },
-                body: JSON.stringify(bodyPayload)
-            });
+        const container = document.getElementById('pwaInstructions');
+        const btnAction = document.getElementById('btnActionInstall');
+        container.innerHTML = '';
 
-            const tempNode = document.getElementById('temp-loading');
-            if (tempNode) tempNode.remove();
-
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.error || `Error (${response.status})`);
-            }
-
-            const data = await response.json();
-            agregarMensaje(data.respuesta, 'ia', true);
-
-        } catch (err) {
-            const tempNode = document.getElementById('temp-loading');
-            if (tempNode) tempNode.remove();
-            agregarMensaje("Error: " + err.message, 'error', false);
+        if (sistema === 'ios') {
+            container.innerHTML = `
+                <div class="pwa-step">
+                    <div class="pwa-step-num">1</div>
+                    <div class="pwa-step-text">Tocá el botón <b>Compartir</b> <span style="font-size:16px;">⎋</span> en la barra inferior de Safari.</div>
+                </div>
+                <div class="pwa-step">
+                    <div class="pwa-step-num">2</div>
+                    <div class="pwa-step-text">Buscá la opción <b>"Agregar a inicio"</b> <span style="font-size:16px;">➕</span> y presioná "Agregar".</div>
+                </div>
+            `;
+            btnAction.style.display = 'none';
+            document.getElementById('modalInstallPWA').style.display = 'flex';
+        } else if (sistema === 'android') {
+            container.innerHTML = `
+                <div class="pwa-step">
+                    <div class="pwa-step-num">1</div>
+                    <div class="pwa-step-text">Tocá el botón azul de abajo para instalar la app directamente en tu celular.</div>
+                </div>
+                <div class="pwa-step">
+                    <div class="pwa-step-num">2</div>
+                    <div class="pwa-step-text">O tocá los <b>3 puntos</b> arriba en Chrome y seleccioná <b>"Instalar aplicación"</b>.</div>
+                </div>
+            `;
+            btnAction.style.display = 'block';
+            document.getElementById('modalInstallPWA').style.display = 'flex';
         }
     }
+
+    // Comprobación al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+        const isAndroid = /android/i.test(userAgent);
+
+        if (isIOS) {
+            mostrarTutorialPWA('ios');
+        } else if (isAndroid && !deferredPrompt) {
+            // Si es Android pero el navegador aún no disparó `beforeinstallprompt`,
+            // le mostramos los pasos manuales tras 2 segundos.
+            setTimeout(() => {
+                mostrarTutorialPWA('android');
+            }, 2000);
+        }
+    });
 </script>
+
 </body>
 </html>
