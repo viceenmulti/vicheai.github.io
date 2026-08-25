@@ -33,15 +33,126 @@
             transition: background 0.3s;
         }
 
-        .chat-container {
+        /* LAYOUT PRINCIPAL */
+        .app-layout {
+            display: flex;
             width: 100%;
-            max-width: 800px;
+            max-width: 1100px;
             height: 100%;
             background-color: #1e1e1e;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR / MENÚ LATERAL (PC) */
+        .sidebar {
+            width: 280px;
+            background-color: #181818;
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
+            padding: 16px;
+            gap: 16px;
+            z-index: 30;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-close-menu {
+            display: none;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* BLOQUES DEL MENÚ */
+        .menu-section {
+            background-color: #222;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .user-vip-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 140, 0, 0.15));
+            border: 1px solid #ffd700;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            color: #ffd700;
+            font-size: 13px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-sidebar-item {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s, opacity 0.2s;
+        }
+
+        .btn-sidebar-item.premium {
+            background-color: #ffcc00;
+            color: #000;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+        }
+
+        .btn-sidebar-item.premium:hover {
+            background-color: #e6b800;
+        }
+
+        .btn-sidebar-item.fondos {
+            background-color: #2a2a2a;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-sidebar-item.fondos:not(:disabled):hover {
+            background-color: #333;
+            border-color: #ffd700;
+        }
+
+        .btn-sidebar-item:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #1a1a1a;
+            color: #666;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* CONTENEDOR PRINCIPAL DEL CHAT */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
             overflow: hidden;
             position: relative;
+            background-size: cover;
             transition: background 0.3s;
         }
 
@@ -54,49 +165,19 @@
             display: flex;
             gap: 8px;
             align-items: center;
-            flex-wrap: wrap;
             z-index: 10;
         }
 
-        /* BOTÓN PREMIUM ARRIBA A LA IZQUIERDA */
-        .btn-premium {
-            background-color: #ffcc00;
-            color: #000;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 12px;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s;
-            white-space: nowrap;
-        }
-
-        .btn-premium:hover {
-            transform: scale(1.05);
-            background-color: #e6b800;
-            box-shadow: 0 0 15px rgba(255, 204, 0, 0.7);
-        }
-
-        /* BOTÓN DE FONDOS */
-        .btn-fondos {
+        .btn-menu-toggle {
             display: none;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            color: #000;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-weight: 800;
-            font-size: 12px;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 16px;
             cursor: pointer;
-            box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
-            transition: transform 0.2s;
-            white-space: nowrap;
-        }
-
-        .btn-fondos:hover {
-            transform: scale(1.05);
+            line-height: 1;
         }
 
         .header input {
@@ -383,6 +464,16 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
+        /* OVERLAY Y SIDEBAR EN CELULARES */
+        .sidebar-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: 25;
+        }
+
         /* MODALES */
         .modal-overlay {
             position: absolute;
@@ -559,130 +650,183 @@
             transform: scale(0.98);
         }
 
-        /* CELULARES */
-        @media (max-width: 600px) {
-            .chat-container { border-radius: 0; }
-            .header { padding: 8px; gap: 6px; }
-            .btn-premium, .btn-fondos { width: 100%; text-align: center; order: -1; }
-            .header button.btn-cargar { flex: 1; }
+        /* RESPONSIVE DESIGN (CELULARES Y TABLETS) */
+        @media (max-width: 768px) {
+            .btn-menu-toggle { display: block; }
+            .btn-close-menu { display: block; }
+
+            .sidebar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 260px;
+                transform: translateX(-100%);
+                box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
             .message { max-width: 90%; font-size: 14px; }
         }
     </style>
 </head>
 <body>
 
-<div class="chat-container" id="mainContainer">
-    <div class="header">
-        <button class="btn-premium" id="btnPremium" onclick="abrirModalPremium()">🌟 Volverse Premium ($1500)</button>
-        <button class="btn-fondos" id="btnFondos" onclick="abrirModalFondos()">🎨 Elegir Fondo</button>
-        
-        <input type="text" id="userInputName" placeholder="Usuario">
-        <input type="password" id="passInput" placeholder="Tu Contraseña">
-        <button class="btn-cargar" onclick="cargarHistorial()">Cargar Chats</button>
-    </div>
+<div class="app-layout">
+    <!-- OVERLAY PARA CERRAR EL MENÚ EN CELULAR -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileMenu(false)"></div>
 
-    <div class="chat-box" id="chatBox">
-        <div class="message ia">¡Hola! Ingresá tu usuario y contraseña personal arriba para comenzar.</div>
-    </div>
-
-    <!-- Inputs ocultos para archivo de la galería y foto de la cámara -->
-    <input type="file" id="inputGaleria" accept="image/*" style="display: none;" onchange="procesarImagen(event)">
-    <input type="file" id="inputCamara" accept="image/*" capture="environment" style="display: none;" onchange="procesarImagen(event)">
-
-    <div class="input-area">
-        <!-- Vista previa de la foto antes de enviar -->
-        <div class="preview-container" id="previewContainer">
-            <img id="imgPreview" src="" alt="Vista previa">
-            <button type="button" class="btn-quitar-img" onclick="quitarImagen()" title="Quitar imagen">✕</button>
+    <!-- MENÚ LATERAL / DESPLEGABLE -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-title">
+            <span>Vichen AI</span>
+            <button class="btn-close-menu" onclick="toggleMobileMenu(false)">✕</button>
         </div>
 
-        <!-- CÁPSULA ESTILO MODERNO -->
-        <div class="input-capsule">
-            <div class="attach-wrapper">
-                <button type="button" class="btn-attach" onclick="toggleAttachMenu(event)" title="Adjuntar media">+</button>
-                <div class="attach-menu" id="attachMenu">
-                    <button type="button" class="attach-option" onclick="seleccionarOpcionAdjunto('galeria')">🖼️ Galería</button>
-                    <button type="button" class="attach-option" onclick="seleccionarOpcionAdjunto('camara')">📷 Cámara</button>
+        <div class="menu-section" id="menuPremiumSection">
+            <!-- SECCIÓN COMPRAR PREMIUM (USUARIOS FREE) -->
+            <div id="wrapperFree">
+                <button class="btn-sidebar-item premium" onclick="abrirModalPremium()">
+                    <span>🌟 Comprar Premium</span>
+                    <span>$1500 ARS</span>
+                </button>
+            </div>
+
+            <!-- ESTADO VIP (USUARIOS PREMIUM) -->
+            <div id="wrapperVip" style="display: none;">
+                <div class="user-vip-card">
+                    <span>👑</span>
+                    <span>Usuario VIP Activo</span>
                 </div>
             </div>
 
-            <input type="text" id="userInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
-
-            <button type="button" class="btn-mic" id="btnMic" onclick="toggleDictadoVoz()" title="Dictado por voz">🎤</button>
-
-            <button type="button" class="btn-submit" onclick="enviarMensaje()" title="Enviar mensaje">↑</button>
-        </div>
-    </div>
-
-    <!-- MODAL PAGO -->
-    <div class="modal-overlay" id="modalPremium">
-        <div class="modal-card">
-            <button class="btn-close-modal" onclick="cerrarModalPremium()">✕</button>
-            <h2>Pase Premium 🌟</h2>
-            <p style="font-size: 13px; color: #aaa;">Desbloqueá todas las funciones por solo <b>$1500 ARS</b></p>
-            
-            <ul>
-                <li>🎨 <b>Temas Visuales:</b> Cambiá colores y fondos personalizados.</li>
-                <li>🧠 <b>Respuestas Máximas:</b> Acceso a Gemini 3.5 Flash Lite.</li>
-                <li>⚡ <b>Uso Ilimitado:</b> Sin restricciones de mensajes diarios.</li>
-            </ul>
-
-            <div class="alias-box">
-                <p style="font-size: 12px; color: #aaa;">Copiá el Alias para transferir:</p>
-                <p style="font-size: 16px; font-weight: bold; color: #ffd700; margin: 4px 0;" id="aliasTexto">vicen12</p>
-                <button class="btn-copy" onclick="copiarAlias()">📋 Copiar Alias al portapapeles</button>
-            </div>
-
-            <a href="https://wa.me/5493415932150?text=Hola!%20Te%20envio%20el%20comprobante%20de%201500%20pesos%20para%20activar%20mi%20cuenta%20Premium." target="_blank" class="btn-wsp">
-                📱 Enviar Comprobante por WhatsApp
-            </a>
-        </div>
-    </div>
-
-    <!-- MODAL FONDOS -->
-    <div class="modal-overlay" id="modalFondos">
-        <div class="modal-card">
-            <button class="btn-close-modal" onclick="cerrarModalFondos()">✕</button>
-            <h2>Personalizar Fondo 🎨</h2>
-            <p style="font-size: 13px; color: #aaa;">Elegí el estilo visual de tu chat:</p>
-            
-            <div class="fondos-grid">
-                <button class="btn-opcion-fondo" style="background-color: #1e1e1e;" onclick="aplicarFondo('gris')">
-                    <span>🌑 Gris Minimalista</span>
-                    <span style="font-size: 11px; color: #888;">Predeterminado</span>
-                </button>
-                <button class="btn-opcion-fondo" style="background-color: #fcf8f2; color: #333;" onclick="aplicarFondo('flores')">
-                    <span>🌸 Jardin Floral</span>
-                    <span style="font-size: 11px; color: #b85b82;">flores.webp</span>
-                </button>
-                <button class="btn-opcion-fondo" style="background-color: #080f1e;" onclick="aplicarFondo('estrellas')">
-                    <span>🌌 Noche Estrellada</span>
-                    <span style="font-size: 11px; color: #00e5ff;">estrellas.webp</span>
-                </button>
-                <button class="btn-opcion-fondo" style="background-color: #1a1402;" onclick="aplicarFondo('oro')">
-                    <span>🏆 Dorado VIP</span>
-                    <span style="font-size: 11px; color: #ffd700;">oro.webp</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL TUTORIAL INSTALACIÓN PWA -->
-    <div class="modal-overlay" id="modalInstallPWA">
-        <div class="modal-card modal-install">
-            <button class="btn-close-modal" onclick="cerrarModalInstall()">✕</button>
-            <h2 id="installTitle" style="color: #00aeef;">Instalar Vichen AI 📲</h2>
-            <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Instalá la app para acceder directo desde tu pantalla de inicio sin usar navegador.</p>
-            
-            <div id="pwaInstructions">
-                <!-- Se completa dinámicamente según el sistema (iOS o Android) -->
-            </div>
-
-            <button type="button" class="btn-install-pwa" id="btnActionInstall" style="display: none;" onclick="activarInstalacionAndroid()">
-                ⚡ Instalar App Ahora
+            <!-- SECCIÓN FONDOS -->
+            <button class="btn-sidebar-item fondos" id="btnFondosSidebar" onclick="abrirModalFondos()" disabled title="Función exclusiva para usuarios Premium">
+                <span>🎨 Personalizar Fondos</span>
+                <span id="iconFondosLock">🔒</span>
             </button>
         </div>
-    </div>
+    </aside>
+
+    <!-- CHAT CONTAINER -->
+    <main class="chat-container" id="mainContainer">
+        <div class="header">
+            <button class="btn-menu-toggle" onclick="toggleMobileMenu(true)" title="Abrir Menú">☰</button>
+            <input type="text" id="userInputName" placeholder="Usuario">
+            <input type="password" id="passInput" placeholder="Tu Contraseña">
+            <button class="btn-cargar" onclick="cargarHistorial()">Cargar Chats</button>
+        </div>
+
+        <div class="chat-box" id="chatBox">
+            <div class="message ia">¡Hola! Ingresá tu usuario y contraseña personal arriba para comenzar.</div>
+        </div>
+
+        <!-- Inputs ocultos para archivo de la galería y foto de la cámara -->
+        <input type="file" id="inputGaleria" accept="image/*" style="display: none;" onchange="procesarImagen(event)">
+        <input type="file" id="inputCamara" accept="image/*" capture="environment" style="display: none;" onchange="procesarImagen(event)">
+
+        <div class="input-area">
+            <!-- Vista previa de la foto antes de enviar -->
+            <div class="preview-container" id="previewContainer">
+                <img id="imgPreview" src="" alt="Vista previa">
+                <button type="button" class="btn-quitar-img" onclick="quitarImagen()" title="Quitar imagen">✕</button>
+            </div>
+
+            <!-- CÁPSULA ESTILO MODERNO -->
+            <div class="input-capsule">
+                <div class="attach-wrapper">
+                    <button type="button" class="btn-attach" onclick="toggleAttachMenu(event)" title="Adjuntar media">+</button>
+                    <div class="attach-menu" id="attachMenu">
+                        <button type="button" class="attach-option" onclick="seleccionarOpcionAdjunto('galeria')">🖼️ Galería</button>
+                        <button type="button" class="attach-option" onclick="seleccionarOpcionAdjunto('camara')">📷 Cámara</button>
+                    </div>
+                </div>
+
+                <input type="text" id="userInput" placeholder="Escribe tu mensaje..." onkeypress="handleKeyPress(event)">
+
+                <button type="button" class="btn-mic" id="btnMic" onclick="toggleDictadoVoz()" title="Dictado por voz">🎤</button>
+
+                <button type="button" class="btn-submit" onclick="enviarMensaje()" title="Enviar mensaje">↑</button>
+            </div>
+        </div>
+
+        <!-- MODAL PAGO -->
+        <div class="modal-overlay" id="modalPremium">
+            <div class="modal-card">
+                <button class="btn-close-modal" onclick="cerrarModalPremium()">✕</button>
+                <h2>Pase Premium 🌟</h2>
+                <p style="font-size: 13px; color: #aaa;">Desbloqueá todas las funciones por solo <b>$1500 ARS</b></p>
+                
+                <ul>
+                    <li>🎨 <b>Temas Visuales:</b> Cambiá colores y fondos personalizados.</li>
+                    <li>🧠 <b>Respuestas Máximas:</b> Acceso a Gemini 3.5 Flash Lite.</li>
+                    <li>⚡ <b>Uso Ilimitado:</b> Sin restricciones de mensajes diarios.</li>
+                </ul>
+
+                <div class="alias-box">
+                    <p style="font-size: 12px; color: #aaa;">Copiá el Alias para transferir:</p>
+                    <p style="font-size: 16px; font-weight: bold; color: #ffd700; margin: 4px 0;" id="aliasTexto">vicen12</p>
+                    <button class="btn-copy" onclick="copiarAlias()">📋 Copiar Alias al portapapeles</button>
+                </div>
+
+                <a href="https://wa.me/5493415932150?text=Hola!%20Te%20envio%20el%20comprobante%20de%201500%20pesos%20para%20activar%20mi%20cuenta%20Premium." target="_blank" class="btn-wsp">
+                    📱 Enviar Comprobante por WhatsApp
+                </a>
+            </div>
+        </div>
+
+        <!-- MODAL FONDOS -->
+        <div class="modal-overlay" id="modalFondos">
+            <div class="modal-card">
+                <button class="btn-close-modal" onclick="cerrarModalFondos()">✕</button>
+                <h2>Personalizar Fondo 🎨</h2>
+                <p style="font-size: 13px; color: #aaa;">Elegí el estilo visual de tu chat:</p>
+                
+                <div class="fondos-grid">
+                    <button class="btn-opcion-fondo" style="background-color: #1e1e1e;" onclick="aplicarFondo('gris')">
+                        <span>🌑 Gris Minimalista</span>
+                        <span style="font-size: 11px; color: #888;">Predeterminado</span>
+                    </button>
+                    <button class="btn-opcion-fondo" style="background-color: #fcf8f2; color: #333;" onclick="aplicarFondo('flores')">
+                        <span>🌸 Jardin Floral</span>
+                        <span style="font-size: 11px; color: #b85b82;">flores.webp</span>
+                    </button>
+                    <button class="btn-opcion-fondo" style="background-color: #080f1e;" onclick="aplicarFondo('estrellas')">
+                        <span>🌌 Noche Estrellada</span>
+                        <span style="font-size: 11px; color: #00e5ff;">estrellas.webp</span>
+                    </button>
+                    <button class="btn-opcion-fondo" style="background-color: #1a1402;" onclick="aplicarFondo('oro')">
+                        <span>🏆 Dorado VIP</span>
+                        <span style="font-size: 11px; color: #ffd700;">oro.webp</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL TUTORIAL INSTALACIÓN PWA -->
+        <div class="modal-overlay" id="modalInstallPWA">
+            <div class="modal-card modal-install">
+                <button class="btn-close-modal" onclick="cerrarModalInstall()">✕</button>
+                <h2 id="installTitle" style="color: #00aeef;">Instalar Vichen AI 📲</h2>
+                <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Instalá la app para acceder directo desde tu pantalla de inicio sin usar navegador.</p>
+                
+                <div id="pwaInstructions">
+                    <!-- Se completa dinámicamente según el sistema (iOS o Android) -->
+                </div>
+
+                <button type="button" class="btn-install-pwa" id="btnActionInstall" style="display: none;" onclick="activarInstalacionAndroid()">
+                    ⚡ Instalar App Ahora
+                </button>
+            </div>
+        </div>
+    </main>
 </div>
 
 <script>
@@ -756,11 +900,32 @@
         }
     }
 
+    // Menú Responsive (Celulares)
+    function toggleMobileMenu(abrir) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if (abrir) {
+            sidebar.classList.add('show');
+            overlay.classList.add('show');
+        } else {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+    }
+
     // Modales
-    function abrirModalPremium() { document.getElementById('modalPremium').style.display = 'flex'; }
+    function abrirModalPremium() { 
+        document.getElementById('modalPremium').style.display = 'flex'; 
+        toggleMobileMenu(false);
+    }
     function cerrarModalPremium() { document.getElementById('modalPremium').style.display = 'none'; }
-    function abrirModalFondos() { document.getElementById('modalFondos').style.display = 'flex'; }
+    
+    function abrirModalFondos() { 
+        document.getElementById('modalFondos').style.display = 'flex'; 
+        toggleMobileMenu(false);
+    }
     function cerrarModalFondos() { document.getElementById('modalFondos').style.display = 'none'; }
+    
     function cerrarModalInstall() { 
         document.getElementById('modalInstallPWA').style.display = 'none'; 
         localStorage.setItem('pwaTutorialVisto', 'true');
@@ -775,16 +940,23 @@
         });
     }
 
+    // LÓGICA DE MENÚ PREMIUM Y FREE
     function actualizarModoPremium(esPremium) {
-        const btnPremium = document.getElementById('btnPremium');
-        const btnFondos = document.getElementById('btnFondos');
+        const wrapperFree = document.getElementById('wrapperFree');
+        const wrapperVip = document.getElementById('wrapperVip');
+        const btnFondosSidebar = document.getElementById('btnFondosSidebar');
+        const iconFondosLock = document.getElementById('iconFondosLock');
 
         if (esPremium) {
-            btnPremium.style.display = 'none';
-            btnFondos.style.display = 'inline-block';
+            wrapperFree.style.display = 'none';
+            wrapperVip.style.display = 'block';
+            btnFondosSidebar.disabled = false;
+            iconFondosLock.textContent = '✨';
         } else {
-            btnPremium.style.display = 'inline-block';
-            btnFondos.style.display = 'none';
+            wrapperFree.style.display = 'block';
+            wrapperVip.style.display = 'none';
+            btnFondosSidebar.disabled = true;
+            iconFondosLock.textContent = '🔒';
         }
     }
 
@@ -1063,11 +1235,9 @@
     }
 
     function mostrarTutorialPWA(sistema) {
-        // Verificar si la PWA ya está corriendo en modo App (Standalone)
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
         if (isStandalone) return; 
 
-        // Si ya vio el tutorial anteriormente y lo cerró, no molestar
         if (localStorage.getItem('pwaTutorialVisto') === 'true') return;
 
         const container = document.getElementById('pwaInstructions');
@@ -1112,8 +1282,6 @@
         if (isIOS) {
             mostrarTutorialPWA('ios');
         } else if (isAndroid && !deferredPrompt) {
-            // Si es Android pero el navegador aún no disparó `beforeinstallprompt`,
-            // le mostramos los pasos manuales tras 2 segundos.
             setTimeout(() => {
                 mostrarTutorialPWA('android');
             }, 2000);
