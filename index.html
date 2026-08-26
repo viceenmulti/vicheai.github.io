@@ -782,34 +782,31 @@
             </div>
         </div>
 
-        <!-- MODAL FONDOS -->
-        <div class="modal-overlay" id="modalFondos">
-            <div class="modal-card">
-                <button class="btn-close-modal" onclick="cerrarModalFondos()">✕</button>
-                <h2>Personalizar Fondo 🎨</h2>
-                <p style="font-size: 13px; color: #aaa;">Elegí el estilo visual de tu chat:</p>
-                
-                <div class="fondos-grid">
-                    <button class="btn-opcion-fondo" style="background-color: #1e1e1e;" onclick="aplicarFondo('gris')">
-                        <span>🌑 Gris Minimalista</span>
-                        <span style="font-size: 11px; color: #888;">Predeterminado</span>
-                    </button>
-                    <button class="btn-opcion-fondo" style="background-color: #fcf8f2; color: #333;" onclick="aplicarFondo('flores')">
-                        <span>🌸 Jardin Floral</span>
-                        <span style="font-size: 11px; color: #b85b82;">flores.webp</span>
-                    </button>
-                    <button class="btn-opcion-fondo" style="background-color: #080f1e;" onclick="aplicarFondo('estrellas')">
-                        <span>🌌 Noche Estrellada</span>
-                        <span style="font-size: 11px; color: #00e5ff;">estrellas.webp</span>
-                    </button>
-                    <button class="btn-opcion-fondo" style="background-color: #1a1402;" onclick="aplicarFondo('oro')">
-                        <span>🏆 Dorado VIP</span>
-                        <span style="font-size: 11px; color: #ffd700;">oro.webp</span>
-                    </button>
-                </div>
-            </div>
+<!-- MODAL FONDOS -->
+<div class="modal-overlay" id="modalFondos">
+    <div class="modal-card">
+        <button class="btn-close-modal" onclick="cerrarModalFondos()">✕</button>
+        <h2>Personalizar Fondo 🎨</h2>
+        <p style="font-size: 13px; color: #aaa;">Elegí el estilo visual de tu chat:</p>
+        
+        <div class="fondos-grid">
+            <button class="btn-opcion-fondo" style="background-color: #1e1e1e;" onclick="aplicarFondo('gris')">
+                <span>🌑 Gris Minimalista</span>
+                <span style="font-size: 11px; color: #888;">Predeterminado</span>
+            </button>
+            <button class="btn-opcion-fondo" style="background-image: url('flores.webp'); background-size: cover; background-position: center; color: #fff;" onclick="aplicarFondo('flores')">
+                <span>🌸 Jardin Floral</span>
+            </button>
+            <button class="btn-opcion-fondo" style="background-image: url('estrellas.webp'); background-size: cover; background-position: center; color: #fff;" onclick="aplicarFondo('estrellas')">
+                <span>🌌 Noche Estrellada</span>
+            </button>
+            <button class="btn-opcion-fondo" style="background-image: url('oro.webp'); background-size: cover; background-position: center; color: #fff;" onclick="aplicarFondo('oro')">
+                <span>🏆 Dorado VIP</span>
+            </button>
         </div>
-
+    </div>
+</div>
+        
         <!-- MODAL TUTORIAL INSTALACIÓN PWA -->
         <div class="modal-overlay" id="modalInstallPWA">
             <div class="modal-card modal-install">
