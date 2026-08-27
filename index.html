@@ -136,6 +136,18 @@
             border-color: #ffd700;
         }
 
+        .btn-sidebar-item.cerrar-sesion {
+            background-color: #3a1c1c;
+            color: #ff8888;
+            border: 1px solid rgba(255, 77, 77, 0.2);
+            margin-top: auto;
+        }
+
+        .btn-sidebar-item.cerrar-sesion:hover {
+            background-color: #522424;
+            color: #fff;
+        }
+
         .btn-sidebar-item:disabled {
             opacity: 0.5;
             cursor: not-allowed;
@@ -257,7 +269,7 @@
             border: 1px solid rgba(255, 0, 0, 0.3);
         }
 
-        /* ÁREA DE INGRESO DE TEXTO - BARRA CÁPSULA ESTILO MODERNO */
+        /* ÁREA DE INGRESO DE TEXTO */
         .input-area {
             padding: 12px 16px 16px;
             background-color: rgba(30, 30, 30, 0.85);
@@ -287,7 +299,7 @@
             background-color: #2d2d2d;
         }
 
-        /* BOTÓN MÁS (+) Y MENÚ DESPLEGABLE DE ADJUNTAR */
+        /* BOTÓN MÁS (+) Y MENÚ DESPLEGABLE */
         .attach-wrapper {
             position: relative;
             display: flex;
@@ -354,7 +366,6 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
 
-        /* INPUT DE TEXTO DENTRO DE LA CÁPSULA */
         .input-capsule input[type="text"] {
             flex: 1;
             background: transparent;
@@ -369,7 +380,6 @@
             color: #888;
         }
 
-        /* BOTÓN DE MICRÓFONO */
         .btn-mic {
             background: transparent;
             border: none;
@@ -403,7 +413,6 @@
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
         }
 
-        /* BOTÓN ENVIAR (CIRCULAR CON FLECHA) */
         .btn-submit {
             width: 36px;
             height: 36px;
@@ -430,7 +439,6 @@
             transform: scale(0.95);
         }
 
-        /* CONTENEDOR DE VISTA PREVIA DE IMAGEN */
         .preview-container {
             display: none;
             position: relative;
@@ -464,7 +472,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* OVERLAY Y SIDEBAR EN CELULARES */
         .sidebar-overlay {
             display: none;
             position: absolute;
@@ -474,7 +481,6 @@
             z-index: 25;
         }
 
-        /* MODALES */
         .modal-overlay {
             position: absolute;
             top: 0; left: 0;
@@ -566,7 +572,6 @@
             cursor: pointer;
         }
 
-        /* OPCIONES DE FONDOS */
         .fondos-grid {
             display: flex;
             flex-direction: column;
@@ -593,7 +598,6 @@
             border-color: #ffd700;
         }
 
-        /* ESTILOS TUTORIAL PWA */
         .modal-install {
             border: 2px solid #00aeef;
             box-shadow: 0 0 25px rgba(0, 174, 239, 0.25);
@@ -650,7 +654,6 @@
             transform: scale(0.98);
         }
 
-        /* RESPONSIVE DESIGN (CELULARES Y TABLETS) */
         @media (max-width: 768px) {
             .btn-menu-toggle { display: block; }
             .btn-close-menu { display: block; }
@@ -680,10 +683,8 @@
 <body>
 
 <div class="app-layout">
-    <!-- OVERLAY PARA CERRAR EL MENÚ EN CELULAR -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileMenu(false)"></div>
 
-    <!-- MENÚ LATERAL / DESPLEGABLE -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-title">
             <span>Vichen AI</span>
@@ -691,7 +692,6 @@
         </div>
 
         <div class="menu-section" id="menuPremiumSection">
-            <!-- SECCIÓN COMPRAR PREMIUM (USUARIOS FREE) -->
             <div id="wrapperFree">
                 <button class="btn-sidebar-item premium" onclick="abrirModalPremium()">
                     <span>🌟 Comprar Premium</span>
@@ -699,7 +699,6 @@
                 </button>
             </div>
 
-            <!-- ESTADO VIP (USUARIOS PREMIUM) -->
             <div id="wrapperVip" style="display: none;">
                 <div class="user-vip-card">
                     <span>👑</span>
@@ -707,39 +706,38 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN FONDOS -->
             <button class="btn-sidebar-item fondos" id="btnFondosSidebar" onclick="abrirModalFondos()" disabled title="Función exclusiva para usuarios Premium">
                 <span>🎨 Personalizar Fondos</span>
                 <span id="iconFondosLock">🔒</span>
             </button>
         </div>
+
+        <button class="btn-sidebar-item cerrar-sesion" id="btnCerrarSesion" onclick="cerrarSesion()" style="display: none;">
+            <span>🚪 Cerrar Sesión</span>
+        </button>
     </aside>
 
-    <!-- CHAT CONTAINER -->
     <main class="chat-container" id="mainContainer">
         <div class="header">
             <button class="btn-menu-toggle" onclick="toggleMobileMenu(true)" title="Abrir Menú">☰</button>
             <input type="text" id="userInputName" placeholder="Usuario">
             <input type="password" id="passInput" placeholder="Tu Contraseña">
-            <button class="btn-cargar" onclick="cargarHistorial()">Cargar Chats</button>
+            <button class="btn-cargar" onclick="iniciarSesionManual()">Cargar Chats</button>
         </div>
 
         <div class="chat-box" id="chatBox">
             <div class="message ia">¡Hola! Ingresá tu usuario y contraseña personal arriba para comenzar.</div>
         </div>
 
-        <!-- Inputs ocultos para archivo de la galería y foto de la cámara -->
         <input type="file" id="inputGaleria" accept="image/*" style="display: none;" onchange="procesarImagen(event)">
         <input type="file" id="inputCamara" accept="image/*" capture="environment" style="display: none;" onchange="procesarImagen(event)">
 
         <div class="input-area">
-            <!-- Vista previa de la foto antes de enviar -->
             <div class="preview-container" id="previewContainer">
                 <img id="imgPreview" src="" alt="Vista previa">
                 <button type="button" class="btn-quitar-img" onclick="quitarImagen()" title="Quitar imagen">✕</button>
             </div>
 
-            <!-- CÁPSULA ESTILO MODERNO -->
             <div class="input-capsule">
                 <div class="attach-wrapper">
                     <button type="button" class="btn-attach" onclick="toggleAttachMenu(event)" title="Adjuntar media">+</button>
@@ -782,35 +780,33 @@
             </div>
         </div>
 
-<!-- MODAL FONDOS -->
-<div class="modal-overlay" id="modalFondos">
-    <div class="modal-card">
-        <button class="btn-close-modal" onclick="cerrarModalFondos()">✕</button>
-        <h2>Personalizar Fondo 🎨</h2>
-        <p style="font-size: 13px; color: #aaa;">Elegí el estilo visual de tu chat:</p>
-        
-      <div class="fondos-grid">
-    <button class="btn-opcion-fondo" style="background-color: #1e1e1e;" onclick="aplicarFondo('gris')">
-        <span>🌑 Gris Minimalista</span>
-        <span style="font-size: 11px; color: #888;">Predeterminado</span>
-    </button>
-    
-    <!-- AHORA FLORES LLAMA A 'flores' -->
-    <button class="btn-opcion-fondo" style="background-image: url('flores.webp'); background-size: cover; background-position: center; color: #fff;" onclick="aplicarFondo('estrellas')"">
-        <span>🌸 Jardin Floral</span>
-    </button>
-    
-    <!-- AHORA ESTRELLAS LLAMA A 'estrellas' -->
-    <button class="btn-opcion-fondo" style="background-image: url('estrellas.webp'); background-size: cover; background-position: center; color: #fff;" onclick="aplicarFondo('flores')">
-        <span>🌌 Noche Estrellada</span>
-    </button>
-    
-    <button class="btn-opcion-fondo" style="background-image: url('oro.webp'); background-size: cover; background-position: center; color: #fff;" onclick="aplicarFondo('oro')">
-        <span>🏆 Dorado VIP</span>
-            </button>
+        <!-- MODAL FONDOS CORREGIDO -->
+        <div class="modal-overlay" id="modalFondos">
+            <div class="modal-card">
+                <button class="btn-close-modal" onclick="cerrarModalFondos()">✕</button>
+                <h2>Personalizar Fondo 🎨</h2>
+                <p style="font-size: 13px; color: #aaa;">Elegí el estilo visual de tu chat:</p>
+                
+                <div class="fondos-grid">
+                    <button class="btn-opcion-fondo" style="background-color: #1e1e1e;" onclick="aplicarFondo('gris')">
+                        <span>🌑 Gris Minimalista</span>
+                        <span style="font-size: 11px; color: #888;">Predeterminado</span>
+                    </button>
+                    
+                    <button class="btn-opcion-fondo" style="background-image: url('flores.webp'); background-size: cover; background-position: center; color: #fff;" onclick="aplicarFondo('estrellas')">
+                        <span>🌸 Jardin Floral</span>
+                    </button>
+                    
+                    <button class="btn-opcion-fondo" style="background-image: url('estrellas.webp'); background-size: cover; background-position: center; color: #fff;" onclick="aplicarFondo('flores')">
+                        <span>🌌 Noche Estrellada</span>
+                    </button>
+                    
+                    <button class="btn-opcion-fondo" style="background-image: url('oro.webp'); background-size: cover; background-position: center; color: #fff;" onclick="aplicarFondo('oro')">
+                        <span>🏆 Dorado VIP</span>
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
         
         <!-- MODAL TUTORIAL INSTALACIÓN PWA -->
         <div class="modal-overlay" id="modalInstallPWA">
@@ -819,9 +815,7 @@
                 <h2 id="installTitle" style="color: #00aeef;">Instalar Vichen AI 📲</h2>
                 <p style="font-size: 13px; color: #aaa; margin-bottom: 10px;">Instalá la app para acceder directo desde tu pantalla de inicio sin usar navegador.</p>
                 
-                <div id="pwaInstructions">
-                    <!-- Se completa dinámicamente según el sistema (iOS o Android) -->
-                </div>
+                <div id="pwaInstructions"></div>
 
                 <button type="button" class="btn-install-pwa" id="btnActionInstall" style="display: none;" onclick="activarInstalacionAndroid()">
                     ⚡ Instalar App Ahora
@@ -835,15 +829,12 @@
     const WORKER_BASE = "https://apikey.vgubertimartin.workers.dev";
     let historialLocal = [];
     
-    // Variables para la gestión de imágenes
     let imagenBase64Seleccionada = null;
     let mimeTypeSeleccionado = null;
 
-    // Variables para el dictado por voz
     let recognition = null;
     let isListening = false;
 
-    // Variable para captura de evento de instalación PWA en Android
     let deferredPrompt = null;
 
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -902,7 +893,6 @@
         }
     }
 
-    // Menú Responsive (Celulares)
     function toggleMobileMenu(abrir) {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
@@ -915,7 +905,6 @@
         }
     }
 
-    // Modales
     function abrirModalPremium() { 
         document.getElementById('modalPremium').style.display = 'flex'; 
         toggleMobileMenu(false);
@@ -942,7 +931,6 @@
         });
     }
 
-    // LÓGICA DE MENÚ PREMIUM Y FREE
     function actualizarModoPremium(esPremium) {
         const wrapperFree = document.getElementById('wrapperFree');
         const wrapperVip = document.getElementById('wrapperVip');
@@ -962,7 +950,6 @@
         }
     }
 
-    // Menú desplegable del botón (+)
     function toggleAttachMenu(e) {
         e.stopPropagation();
         const menu = document.getElementById('attachMenu');
@@ -1009,6 +996,7 @@
         document.getElementById('inputCamara').value = '';
     }
 
+    /* FUNCIÓN APLICAR FONDO CORREGIDA */
     function aplicarFondo(estilo) {
         const container = document.getElementById('mainContainer');
         
@@ -1017,21 +1005,21 @@
         container.style.backgroundRepeat = 'no-repeat';
 
         if (estilo === 'flores') {
-            container.style.backgroundImage = "url('estrellas.webp')";
+            container.style.backgroundImage = "url('flores.webp')";
             container.style.backgroundSize = 'cover';
-            container.style.backgroundPosition = '25% 20%';
+            container.style.backgroundPosition = 'center';
             document.body.style.backgroundColor = '#fdfbf7';
         } 
         else if (estilo === 'estrellas') {
-            container.style.backgroundImage = "url('flores.webp')";
+            container.style.backgroundImage = "url('estrellas.webp')";
             container.style.backgroundSize = 'cover';
-            container.style.backgroundPosition = '70% 30%';
+            container.style.backgroundPosition = 'center';
             document.body.style.backgroundColor = '#040814';
         } 
         else if (estilo === 'oro') {
             container.style.backgroundImage = "url('oro.webp')";
             container.style.backgroundSize = 'cover';
-            container.style.backgroundPosition = '15% 40%';
+            container.style.backgroundPosition = 'center';
             document.body.style.backgroundColor = '#0d0b04';
         } 
         else {
@@ -1041,7 +1029,8 @@
         cerrarModalFondos();
     }
 
-    async function cargarHistorial() {
+    /* INICIO DE SESIÓN Y PERSISTENCIA (LOCALSTORAGE) */
+    function iniciarSesionManual() {
         const usuario = document.getElementById('userInputName').value.trim();
         const password = document.getElementById('passInput').value.trim();
 
@@ -1049,6 +1038,19 @@
             alert("Por favor ingresa tu usuario y contraseña.");
             return;
         }
+
+        // Guardar credenciales para mantener la sesión abierta
+        localStorage.setItem('vichen_user', usuario);
+        localStorage.setItem('vichen_pass', password);
+
+        cargarHistorial();
+    }
+
+    async function cargarHistorial() {
+        const usuario = document.getElementById('userInputName').value.trim();
+        const password = document.getElementById('passInput').value.trim();
+
+        if (!usuario || !password) return;
 
         try {
             const url = `${WORKER_BASE}/obtener-chats`;
@@ -1082,9 +1084,22 @@
                 historialLocal.forEach(msg => agregarMensaje(msg.texto, msg.tipo, false, msg.imagenUrl));
             }
 
+            // Mostrar el botón para cerrar sesión cuando hay datos cargados
+            document.getElementById('btnCerrarSesion').style.display = 'flex';
+
         } catch (err) {
             alert("Error al cargar historial: " + err.message);
         }
+    }
+
+    function cerrarSesion() {
+        localStorage.removeItem('vichen_user');
+        localStorage.removeItem('vichen_pass');
+        document.getElementById('userInputName').value = '';
+        document.getElementById('passInput').value = '';
+        document.getElementById('chatBox').innerHTML = '<div class="message ia">Sesión cerrada. Ingresá tu usuario y contraseña arriba para ingresar.</div>';
+        document.getElementById('btnCerrarSesion').style.display = 'none';
+        toggleMobileMenu(false);
     }
 
     async function guardarHistorial() {
@@ -1208,7 +1223,6 @@
         }
     }
 
-    /* REGISTRO DE SERVICE WORKER PARA PWA */
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
@@ -1217,7 +1231,6 @@
         });
     }
 
-    /* LÓGICA DE DETECCIÓN E INSTALACIÓN INTELIGENTE DE PWA */
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
@@ -1275,8 +1288,19 @@
         }
     }
 
-    // Comprobación al cargar la página
+    // AUTO-LOGIN AL CARGAR LA PÁGINA
     window.addEventListener('DOMContentLoaded', () => {
+        // Verificar si hay sesión guardada
+        const savedUser = localStorage.getItem('vichen_user');
+        const savedPass = localStorage.getItem('vichen_pass');
+
+        if (savedUser && savedPass) {
+            document.getElementById('userInputName').value = savedUser;
+            document.getElementById('passInput').value = savedPass;
+            cargarHistorial();
+        }
+
+        // Detección PWA
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
         const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
         const isAndroid = /android/i.test(userAgent);
