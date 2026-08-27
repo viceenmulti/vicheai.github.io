@@ -44,7 +44,7 @@
             overflow: hidden;
         }
 
-        /* SIDEBAR / MENÚ LATERAL (PC) */
+        /* SIDEBAR / MENÚ LATERAL */
         .sidebar {
             width: 280px;
             background-color: #181818;
@@ -52,7 +52,7 @@
             display: flex;
             flex-direction: column;
             padding: 16px;
-            gap: 16px;
+            gap: 12px;
             z-index: 30;
             transition: transform 0.3s ease;
         }
@@ -73,6 +73,85 @@
             color: #aaa;
             font-size: 20px;
             cursor: pointer;
+        }
+
+        /* BOTÓN NUEVO CHAT */
+        .btn-nuevo-chat {
+            width: 100%;
+            padding: 10px;
+            background-color: #2a2a2a;
+            color: #fff;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .btn-nuevo-chat:hover {
+            background-color: #333;
+            border-color: #00aeef;
+        }
+
+        /* LISTA DE CHATS */
+        .chat-list-container {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background-color: #222;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #ccc;
+            border: 1px solid transparent;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .chat-item:hover {
+            background-color: #2a2a2a;
+        }
+
+        .chat-item.activo {
+            background-color: rgba(0, 174, 239, 0.15);
+            border-color: #00aeef;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .chat-title-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .btn-delete-chat {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .btn-delete-chat:hover {
+            color: #ff4d4d;
+            background-color: rgba(255, 77, 77, 0.1);
         }
 
         /* BLOQUES DEL MENÚ */
@@ -140,7 +219,6 @@
             background-color: #3a1c1c;
             color: #ff8888;
             border: 1px solid rgba(255, 77, 77, 0.2);
-            margin-top: auto;
         }
 
         .btn-sidebar-item.cerrar-sesion:hover {
@@ -231,7 +309,6 @@
             -webkit-overflow-scrolling: touch; 
         }
 
-        /* MENSAJES SEMI-TRANSPARENTES CON EFECTO GLASSMORPHISM */
         .message {
             max-width: 85%;
             padding: 12px 16px;
@@ -299,7 +376,6 @@
             background-color: #2d2d2d;
         }
 
-        /* BOTÓN MÁS (+) Y MENÚ DESPLEGABLE */
         .attach-wrapper {
             position: relative;
             display: flex;
@@ -691,6 +767,14 @@
             <button class="btn-close-menu" onclick="toggleMobileMenu(false)">✕</button>
         </div>
 
+        <button class="btn-nuevo-chat" onclick="crearNuevoChat()">
+            <span>➕ Nuevo Chat</span>
+        </button>
+
+        <div class="chat-list-container" id="chatListContainer">
+            <!-- La lista de conversaciones se genera dinámicamente -->
+        </div>
+
         <div class="menu-section" id="menuPremiumSection">
             <div id="wrapperFree">
                 <button class="btn-sidebar-item premium" onclick="abrirModalPremium()">
@@ -780,7 +864,7 @@
             </div>
         </div>
 
-        <!-- MODAL FONDOS CORREGIDO -->
+        <!-- MODAL FONDOS -->
         <div class="modal-overlay" id="modalFondos">
             <div class="modal-card">
                 <button class="btn-close-modal" onclick="cerrarModalFondos()">✕</button>
@@ -827,14 +911,16 @@
 
 <script>
     const WORKER_BASE = "https://apikey.vgubertimartin.workers.dev";
-    let historialLocal = [];
+    
+    // Estructura multichat: lista de objetos { id, titulo, mensajes }
+    let listaChats = [];
+    let chatActivoId = null;
     
     let imagenBase64Seleccionada = null;
     let mimeTypeSeleccionado = null;
 
     let recognition = null;
     let isListening = false;
-
     let deferredPrompt = null;
 
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -996,7 +1082,6 @@
         document.getElementById('inputCamara').value = '';
     }
 
-    /* FUNCIÓN APLICAR FONDO CORREGIDA */
     function aplicarFondo(estilo) {
         const container = document.getElementById('mainContainer');
         
@@ -1029,7 +1114,100 @@
         cerrarModalFondos();
     }
 
-    /* INICIO DE SESIÓN Y PERSISTENCIA (LOCALSTORAGE) */
+    /* SISTEMA DE GESTIÓN MULTI-CHAT */
+
+    function renderizarSidebarChats() {
+        const container = document.getElementById('chatListContainer');
+        container.innerHTML = '';
+
+        listaChats.forEach(chat => {
+            const item = document.createElement('div');
+            item.classList.add('chat-item');
+            if (chat.id === chatActivoId) {
+                item.classList.add('activo');
+            }
+
+            const title = document.createElement('span');
+            title.classList.add('chat-title-text');
+            title.textContent = chat.titulo || "Nuevo Chat";
+            title.onclick = () => seleccionarChat(chat.id);
+
+            const btnDelete = document.createElement('button');
+            btnDelete.classList.add('btn-delete-chat');
+            btnDelete.textContent = "✕";
+            btnDelete.title = "Eliminar chat";
+            btnDelete.onclick = (e) => {
+                e.stopPropagation();
+                eliminarChat(chat.id);
+            };
+
+            item.appendChild(title);
+            item.appendChild(btnDelete);
+            container.appendChild(item);
+        });
+    }
+
+    function renderizarMensajesChatActivo() {
+        const chatBox = document.getElementById('chatBox');
+        chatBox.innerHTML = '';
+
+        const chatActual = listaChats.find(c => c.id === chatActivoId);
+
+        if (!chatActual || !chatActual.mensajes || chatActual.mensajes.length === 0) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', 'ia');
+            msgDiv.textContent = "¡Hola! ¿En qué puedo ayudarte hoy?";
+            chatBox.appendChild(msgDiv);
+            return;
+        }
+
+        chatActual.mensajes.forEach(msg => {
+            agregarMensajeAlDOM(msg.texto, msg.tipo, msg.imagenUrl);
+        });
+    }
+
+    function crearNuevoChat() {
+        const nuevoId = "chat_" + Date.now();
+        const nuevoChat = {
+            id: nuevoId,
+            titulo: "Nuevo Chat",
+            mensajes: []
+        };
+
+        listaChats.unshift(nuevoChat);
+        chatActivoId = nuevoId;
+
+        renderizarSidebarChats();
+        renderizarMensajesChatActivo();
+        guardarHistorial();
+        toggleMobileMenu(false);
+    }
+
+    function seleccionarChat(id) {
+        chatActivoId = id;
+        renderizarSidebarChats();
+        renderizarMensajesChatActivo();
+        toggleMobileMenu(false);
+    }
+
+    function eliminarChat(id) {
+        listaChats = listaChats.filter(c => c.id !== id);
+        
+        if (chatActivoId === id) {
+            chatActivoId = listaChats.length > 0 ? listaChats[0].id : null;
+        }
+
+        if (!chatActivoId && listaChats.length === 0) {
+            crearNuevoChat();
+        } else {
+            renderizarSidebarChats();
+            renderizarMensajesChatActivo();
+            guardarHistorial();
+        }
+    }
+
+    /* INICIO DE SESIÓN Y PERSISTENCIA DE DATOS */
+
     function iniciarSesionManual() {
         const usuario = document.getElementById('userInputName').value.trim();
         const password = document.getElementById('passInput').value.trim();
@@ -1039,7 +1217,6 @@
             return;
         }
 
-        // Guardar credenciales para mantener la sesión abierta
         localStorage.setItem('vichen_user', usuario);
         localStorage.setItem('vichen_pass', password);
 
@@ -1068,23 +1245,31 @@
             }
 
             const data = await response.json();
-            historialLocal = data.chats || [];
             
+            // Migración automática si los datos viejos venían como una lista plana de mensajes
+            if (Array.isArray(data.chats) && data.chats.length > 0 && data.chats[0].texto) {
+                listaChats = [{
+                    id: "chat_migrado",
+                    titulo: data.chats[0].texto.slice(0, 20) || "Chat Antiguo",
+                    mensajes: data.chats
+                }];
+                chatActivoId = "chat_migrado";
+            } else {
+                listaChats = data.chats || [];
+                chatActivoId = data.chatActivoId || (listaChats.length > 0 ? listaChats[0].id : null);
+            }
+
+            if (listaChats.length === 0) {
+                crearNuevoChat();
+            } else {
+                renderizarSidebarChats();
+                renderizarMensajesChatActivo();
+            }
+
             if (data.isPremium !== undefined) {
                 actualizarModoPremium(data.isPremium);
             }
 
-            const chatBox = document.getElementById('chatBox');
-            chatBox.innerHTML = '';
-
-            if (!Array.isArray(historialLocal) || historialLocal.length === 0) {
-                agregarMensaje("No tenés chats guardados aún para este usuario.", 'ia', false);
-                historialLocal = [];
-            } else {
-                historialLocal.forEach(msg => agregarMensaje(msg.texto, msg.tipo, false, msg.imagenUrl));
-            }
-
-            // Mostrar el botón para cerrar sesión cuando hay datos cargados
             document.getElementById('btnCerrarSesion').style.display = 'flex';
 
         } catch (err) {
@@ -1097,6 +1282,10 @@
         localStorage.removeItem('vichen_pass');
         document.getElementById('userInputName').value = '';
         document.getElementById('passInput').value = '';
+        
+        listaChats = [];
+        chatActivoId = null;
+        document.getElementById('chatListContainer').innerHTML = '';
         document.getElementById('chatBox').innerHTML = '<div class="message ia">Sesión cerrada. Ingresá tu usuario y contraseña arriba para ingresar.</div>';
         document.getElementById('btnCerrarSesion').style.display = 'none';
         toggleMobileMenu(false);
@@ -1117,7 +1306,10 @@
                     'X-User-Name': usuario,
                     'X-User-Pass': password
                 },
-                body: JSON.stringify({ chats: historialLocal })
+                body: JSON.stringify({ 
+                    chats: listaChats,
+                    chatActivoId: chatActivoId
+                })
             });
         } catch (e) {
             console.error("Error guardando en KV:", e);
@@ -1142,10 +1334,24 @@
 
         if (!pregunta && !imagenBase64Seleccionada) return;
 
+        if (!chatActivoId || listaChats.length === 0) {
+            crearNuevoChat();
+        }
+
+        const chatActual = listaChats.find(c => c.id === chatActivoId);
         const preguntaFinal = pregunta || (imagenBase64Seleccionada ? "Describe o analiza esta imagen." : "");
 
-        agregarMensaje(preguntaFinal, 'user', true, imagenBase64Seleccionada);
-        
+        // Asignar título al chat basado en el primer mensaje
+        if (chatActual.mensajes.length === 0 && preguntaFinal) {
+            chatActual.titulo = preguntaFinal.length > 25 ? preguntaFinal.slice(0, 25) + "..." : preguntaFinal;
+            renderizarSidebarChats();
+        }
+
+        // Agregar mensaje local al estado
+        const msgUsuario = { texto: preguntaFinal, tipo: 'user', imagenUrl: imagenBase64Seleccionada };
+        chatActual.mensajes.push(msgUsuario);
+        agregarMensajeAlDOM(msgUsuario.texto, msgUsuario.tipo, msgUsuario.imagenUrl);
+
         const auxImagen = imagenBase64Seleccionada;
         const auxMime = mimeTypeSeleccionado;
 
@@ -1164,7 +1370,7 @@
                     pregunta: preguntaFinal,
                     imagen: auxImagen,
                     mimeType: auxMime,
-                    historial: historialLocal 
+                    historial: chatActual.mensajes 
                 })
             });
 
@@ -1176,18 +1382,20 @@
 
             if (response.ok && data.candidates && data.candidates[0].content.parts[0].text) {
                 const respuestaIA = data.candidates[0].content.parts[0].text;
-                agregarMensaje(respuestaIA, 'ia', true);
+                const msgIA = { texto: respuestaIA, tipo: 'ia' };
+                chatActual.mensajes.push(msgIA);
+                agregarMensajeAlDOM(msgIA.texto, msgIA.tipo);
                 await guardarHistorial();
             } else {
                 const errMsj = data.error || "Error en la respuesta del servidor.";
-                agregarMensaje("Error: " + errMsj, 'error', false);
+                agregarMensajeAlDOM("Error: " + errMsj, 'error');
             }
         } catch (error) {
-            agregarMensaje("Error de conexión: " + error.message, 'error', false);
+            agregarMensajeAlDOM("Error de conexión: " + error.message, 'error');
         }
     }
 
-    function agregarMensaje(texto, tipo, guardarEnMemoria = true, imagenUrl = null) {
+    function agregarMensajeAlDOM(texto, tipo, imagenUrl = null) {
         const chatBox = document.getElementById('chatBox');
         const msgDiv = document.createElement('div');
         msgDiv.classList.add('message', tipo);
@@ -1211,10 +1419,6 @@
 
         chatBox.appendChild(msgDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
-
-        if (guardarEnMemoria) {
-            historialLocal.push({ texto, tipo, imagenUrl });
-        }
     }
 
     function handleKeyPress(e) {
@@ -1290,7 +1494,6 @@
 
     // AUTO-LOGIN AL CARGAR LA PÁGINA
     window.addEventListener('DOMContentLoaded', () => {
-        // Verificar si hay sesión guardada
         const savedUser = localStorage.getItem('vichen_user');
         const savedPass = localStorage.getItem('vichen_pass');
 
@@ -1300,7 +1503,6 @@
             cargarHistorial();
         }
 
-        // Detección PWA
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
         const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
         const isAndroid = /android/i.test(userAgent);
